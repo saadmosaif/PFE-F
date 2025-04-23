@@ -1,14 +1,29 @@
-// src/app/pages/home/home.component.ts
-import { Component } from '@angular/core';
+// home.component.ts
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/auth/auth.service';
+import { KeycloakProfile } from 'keycloak-js';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <h1>Bienvenue dans la page d'accueil</h1>
-    <p>Vous êtes authentifié avec succès via Keycloak.</p>
-  `
+    <h2>Bienvenue dans la page d'accueil</h2>
+    <p *ngIf="profile">Bonjour {{ profile.firstName }} {{ profile.lastName }} ({{ profile.email }})</p>
+    <button (click)="logout()">Se déconnecter</button>
+  `,
 })
-export class HomeComponent {}
+export class HomeComponent implements OnInit {
+  profile?: KeycloakProfile;
+
+  constructor(private authService: AuthService) {}
+
+  async ngOnInit(): Promise<void> {
+    this.profile = await this.authService.getLoggedUser();
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+}
