@@ -21,6 +21,7 @@ export class ListPortsComponent implements OnInit {
   loadPorts(): void {
     this.portService.getPorts().subscribe({
       next: (data) => {
+        console.log('Ports récupérés:', data);  // Ajoute un log pour vérifier les données
         this.ports = data;
       },
       error: (err) => {

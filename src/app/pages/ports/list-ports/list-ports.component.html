@@ -1,5 +1,5 @@
 <h2>Liste des Ports</h2>
-<table>
+<table *ngIf="ports.length > 0; else noPorts">
   <thead>
     <tr>
       <th>Code</th>
@@ -17,3 +17,6 @@
     </tr>
   </tbody>
 </table>
+<ng-template #noPorts>
+  <p>Aucun port à afficher.</p>
+</ng-template>

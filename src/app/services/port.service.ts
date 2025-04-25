@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../core/auth/auth.service';
-import { Observable } from 'rxjs';
+import {Observable, tap, throwError} from 'rxjs';
 
 export interface Port {
   id: number;
@@ -27,13 +27,22 @@ export class PortService {
   }
 
   getPorts(): Observable<Port[]> {
-    const token = localStorage.getItem('access_token'); // ou autre méthode pour récupérer ton token
+    const token = this.authService.getToken();
+
+    if (!token) {
+      console.error('Token manquant, utilisateur non authentifié.');
+      return throwError(() => new Error('Utilisateur non authentifié.'));
+    }
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get<Port[]>(this.apiUrl, { headers });
+    return this.http.get<Port[]>(`${this.apiUrl}/all`, { headers });
   }
+
+
+
 
   updatePort(id: number, portData: any): Observable<any> {
     const token = this.authService.getToken();
