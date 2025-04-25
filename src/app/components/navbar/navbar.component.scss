@@ -1,0 +1,28 @@
+.navbar {
+    background-color: #007bff; /* bleu */
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar-left {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  .navbar-right button {
+    background-color: white;
+    color: #007bff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .navbar-right button:hover {
+    background-color: #e6e6e6;
+  }
+  

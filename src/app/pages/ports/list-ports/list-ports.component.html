@@ -1,0 +1,19 @@
+<h2>Liste des Ports</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Nom</th>
+      <th>Localisation</th>
+      <th>Capacité</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let port of ports">
+      <td>{{ port.codePort }}</td>
+      <td>{{ port.nomPort }}</td>
+      <td>{{ port.localisation }}</td>
+      <td>{{ port.capacite }}</td>
+    </tr>
+  </tbody>
+</table>
