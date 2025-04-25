@@ -33,6 +33,7 @@ export class PortService {
       console.error('Token manquant, utilisateur non authentifié.');
       return throwError(() => new Error('Utilisateur non authentifié.'));
     }
+    //apah
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
