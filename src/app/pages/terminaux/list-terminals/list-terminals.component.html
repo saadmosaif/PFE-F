@@ -1,22 +1,54 @@
-<h2>Liste des Terminaux</h2>
-<table *ngIf="terminaux.length > 0; else noPorts">
-  <thead>
-  <tr>
-    <th>type</th>
-    <th>numero</th>
-    <th>Capacité</th>
-    <th>code du port</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let terminaux of terminaux">
-    <td>{{ terminaux.type }}</td>
-    <td>{{ terminaux.numero }}</td>
-    <td>{{ terminaux.capacite }}</td>
-    <td>{{ terminaux.port?.codePort }}</td>
-  </tr>
-  </tbody>
-</table>
-<ng-template #noPorts>
-  <p>Aucun terminal à afficher.</p>
-</ng-template>
+<div class="container">
+  <h2 class="title">Liste des Terminaux</h2>
+
+  <table *ngIf="terminaux.length > 0; else noTerminals" class="styled-table">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Numéro</th>
+        <th>Capacité</th>
+        <th>Code Port</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let terminal of terminaux">
+        <td>{{ terminal.type }}</td>
+        <td>{{ terminal.numero }}</td>
+        <td>{{ terminal.capacite }}</td>
+        <td>{{ terminal.port.codePort }}</td>
+        <td class="actions">
+          <button class="edit-btn" (click)="editTerminal(terminal)">✏️ Modifier</button>
+          <button class="delete-btn" (click)="deleteTerminal(terminal.id)">🗑️ Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #noTerminals>
+    <p class="no-data">Aucun terminal à afficher.</p>
+  </ng-template>
+
+  <!-- Formulaire de modification -->
+  <div *ngIf="editingTerminal" class="edit-form">
+    <h3>Modifier le terminal</h3>
+    <form (ngSubmit)="saveTerminal()">
+      <label>Type:</label>
+      <input type="text" [(ngModel)]="editingTerminal.type" name="type" required>
+
+      <label>Numéro:</label>
+      <input type="text" [(ngModel)]="editingTerminal.numero" name="numero" required>
+
+      <label>Capacité:</label>
+      <input type="number" [(ngModel)]="editingTerminal.capacite" name="capacite" required>
+
+      <label>Code Port:</label>
+      <input type="text" [(ngModel)]="editingTerminal.port.codePort" name="codePort" required>
+
+      <div class="form-buttons">
+        <button type="submit" class="save-btn">💾 Sauvegarder</button>
+        <button type="button" class="cancel-btn" (click)="cancelEdit()">❌ Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

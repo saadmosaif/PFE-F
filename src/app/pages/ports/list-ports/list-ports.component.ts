@@ -29,4 +29,17 @@ export class ListPortsComponent implements OnInit {
       }
     });
   }
+  editPort(port: Port) {
+    // Rediriger vers une page édition avec ID ou ouvrir un modal
+    console.log('Modifier le port', port);
+  }
+  
+  deletePort(id: number) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce port ?')) {
+      this.portService.deletePort(id).subscribe(() => {
+        console.log('Port supprimé');
+        this.loadPorts(); // recharger la liste après suppression
+      });
+    }
+  }
 }

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TerminalService } from '../../../services/terminal.service';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-create-terminal',
   standalone: true,

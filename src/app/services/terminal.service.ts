@@ -50,11 +50,21 @@ export class TerminalService {
   updateTerminal(id: number, terminalData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
-    return this.http.put(`${this.apiUrl}/${id}`, terminalData, { headers });
+  
+    // 🔥 Nettoyer l'objet terminal avant d'envoyer
+    const cleanedTerminal = {
+      type: terminalData.type,
+      numero: terminalData.numero,
+      capacite: terminalData.capacite,
+      codePort: terminalData.port?.codePort // on récupère juste le code
+    };
+  
+    return this.http.put(`${this.apiUrl}/${id}`, cleanedTerminal, { headers });
   }
+  
 
   deleteTerminal(id: number): Observable<void> {
     const token = this.authService.getToken();
