@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {AuthService} from "../core/auth/auth.service";
-import {Observable, throwError} from "rxjs";
-import {Port} from "./port.service";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { AuthService } from "../core/auth/auth.service";
+import { Observable, throwError } from "rxjs";
+import { Port } from "./port.service";
 
 export interface Terminal {
   id: number;
@@ -24,7 +24,10 @@ export class TerminalService {
 
   createTerminal(terminalData: any): Observable<any> {
     const token = this.authService.getToken();
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
     return this.http.post(this.apiUrl, terminalData, { headers });
   }
 
@@ -37,24 +40,28 @@ export class TerminalService {
     }
 
     const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
 
     return this.http.get<Terminal[]>(`${this.apiUrl}/all`, { headers });
   }
 
-
-
-
   updateTerminal(id: number, terminalData: any): Observable<any> {
     const token = this.authService.getToken();
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
     return this.http.put(`${this.apiUrl}/${id}`, terminalData, { headers });
   }
 
   deleteTerminal(id: number): Observable<void> {
     const token = this.authService.getToken();
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
 }
