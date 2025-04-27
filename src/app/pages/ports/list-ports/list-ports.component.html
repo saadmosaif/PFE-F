@@ -1,22 +1,45 @@
-<h2>Liste des Ports</h2>
-<table *ngIf="ports.length > 0; else noPorts">
-  <thead>
-    <tr>
-      <th>Code</th>
-      <th>Nom</th>
-      <th>Localisation</th>
-      <th>Capacité</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let port of ports">
-      <td>{{ port.codePort }}</td>
-      <td>{{ port.nomPort }}</td>
-      <td>{{ port.localisation }}</td>
-      <td>{{ port.capacite }}</td>
-    </tr>
-  </tbody>
-</table>
-<ng-template #noPorts>
-  <p>Aucun port à afficher.</p>
-</ng-template>
+<div class="port-list-container">
+    <h2>Liste des Ports</h2>
+  
+    <table *ngIf="ports.length > 0; else noPorts">
+      <thead>
+        <tr>
+          <th>Code Port</th>
+          <th>Nom</th>
+          <th>Localisation</th>
+          <th>Capacité</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let port of ports">
+          <td>{{ port.codePort }}</td>
+          <td>{{ port.nomPort }}</td>
+          <td>{{ port.localisation }}</td>
+          <td>{{ port.capacite }}</td>
+          <td>
+            <button class="action-btn edit-btn" (click)="editPort(port)">✏️ Modifier</button>
+            <button class="action-btn delete-btn" (click)="deletePort(port.id)">🗑️ Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <ng-template #noPorts>
+      <p>Aucun port disponible pour le moment.</p>
+    </ng-template>
+  
+    <div *ngIf="editingPort" class="edit-form">
+      <h3>Modifier le Port</h3>
+      <form (ngSubmit)="savePort()">
+        <input type="text" [(ngModel)]="editingPort.codePort" name="codePort" required placeholder="Code Port" />
+        <input type="text" [(ngModel)]="editingPort.nomPort" name="nomPort" required placeholder="Nom" />
+        <input type="text" [(ngModel)]="editingPort.localisation" name="localisation" required placeholder="Localisation" />
+        <input type="number" [(ngModel)]="editingPort.capacite" name="capacite" required placeholder="Capacité" />
+  
+        <button type="submit" class="save-btn">✅ Sauvegarder</button>
+        <button type="button" (click)="cancelEdit()" class="cancel-btn">❌ Annuler</button>
+      </form>
+    </div>
+  </div>
+  

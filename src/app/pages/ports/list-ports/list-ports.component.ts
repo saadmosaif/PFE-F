@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PortService, Port } from '../../../services/port.service';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-  selector: 'app-port-list',
+  selector: 'app-list-ports',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
-  templateUrl: './list-ports.component.html'
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  templateUrl: './list-ports.component.html',
+  styleUrl: './list-ports.component.scss'
 })
 export class ListPortsComponent implements OnInit {
   ports: Port[] = [];
+  editingPort: Port | null = null;
 
   constructor(private portService: PortService) {}
 
@@ -21,7 +24,6 @@ export class ListPortsComponent implements OnInit {
   loadPorts(): void {
     this.portService.getPorts().subscribe({
       next: (data) => {
-        console.log('Ports récupérés:', data);  // Ajoute un log pour vérifier les données
         this.ports = data;
       },
       error: (err) => {
@@ -29,16 +31,38 @@ export class ListPortsComponent implements OnInit {
       }
     });
   }
-  editPort(port: Port) {
-    // Rediriger vers une page édition avec ID ou ouvrir un modal
-    console.log('Modifier le port', port);
+
+  editPort(port: Port): void {
+    this.editingPort = { ...port }; // copie pour l'édition
   }
-  
-  deletePort(id: number) {
+
+  savePort(): void {
+    if (this.editingPort && this.editingPort.id != null) {
+      this.portService.updatePort(this.editingPort.id, this.editingPort).subscribe({
+        next: () => {
+          this.loadPorts();
+          this.editingPort = null;
+        },
+        error: (err) => {
+          console.error('Erreur lors de la modification du port :', err);
+        }
+      });
+    }
+  }
+
+  cancelEdit(): void {
+    this.editingPort = null;
+  }
+
+  deletePort(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce port ?')) {
-      this.portService.deletePort(id).subscribe(() => {
-        console.log('Port supprimé');
-        this.loadPorts(); // recharger la liste après suppression
+      this.portService.deletePort(id).subscribe({
+        next: () => {
+          this.loadPorts();
+        },
+        error: (err) => {
+          console.error('Erreur lors de la suppression du port :', err);
+        }
       });
     }
   }
