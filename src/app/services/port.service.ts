@@ -11,6 +11,14 @@ export interface Port {
   capacite: number;
   deleted: boolean;
 }
+export interface Terminal {
+  id: number;
+  port: Port;
+  type: string;
+  numero: string;
+  capacite: number;
+  deleted: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +41,6 @@ export class PortService {
       console.error('Token manquant, utilisateur non authentifié.');
       return throwError(() => new Error('Utilisateur non authentifié.'));
     }
-    //apah
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`

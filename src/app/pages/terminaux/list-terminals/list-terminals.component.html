@@ -1,1 +1,22 @@
-<p>list-terminals works!</p>
+<h2>Liste des Terminaux</h2>
+<table *ngIf="terminaux.length > 0; else noPorts">
+  <thead>
+  <tr>
+    <th>type</th>
+    <th>numero</th>
+    <th>Capacité</th>
+    <th>code du port</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let terminaux of terminaux">
+    <td>{{ terminaux.type }}</td>
+    <td>{{ terminaux.numero }}</td>
+    <td>{{ terminaux.capacite }}</td>
+    <td>{{ terminaux.port?.codePort }}</td>
+  </tr>
+  </tbody>
+</table>
+<ng-template #noPorts>
+  <p>Aucun terminal à afficher.</p>
+</ng-template>
