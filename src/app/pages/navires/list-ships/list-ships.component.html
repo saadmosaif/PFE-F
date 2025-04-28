@@ -1,1 +1,44 @@
-<p>list-ships works!</p>
+<div class="port-list-container">
+  <h2>Liste des navires</h2>
+
+  <table *ngIf="ships.length > 0; else noPorts">
+    <thead>
+    <tr>
+      <th>Numero IMO</th>
+      <th>Nom</th>
+      <th>Type</th>
+      <th>Capacité</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let ship of ships">
+      <td>{{ ship.nom }}</td>
+      <td>{{ ship.numeroIMO }}</td>
+      <td>{{ ship.type }}</td>
+      <td>{{ ship.capacite }}</td>
+      <td>
+        <button class="action-btn edit-btn" (click)="editNavire(ship)">✏️ Modifier</button>
+        <button class="action-btn delete-btn" (click)="deleteNavire(ship.id)">🗑️ Supprimer</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <ng-template #noPorts>
+    <p>Aucun navire disponible pour le moment.</p>
+  </ng-template>
+
+  <div *ngIf="editingNavire" class="edit-form">
+    <h3>Modifier le navire</h3>
+    <form (ngSubmit)="saveNavire()">
+      <input type="text" [(ngModel)]="editingNavire.numeroIMO" name="numeroIMO" required placeholder="numero IMO" />
+      <input type="text" [(ngModel)]="editingNavire.nom" name="nom" required placeholder="Nom" />
+      <input type="text" [(ngModel)]="editingNavire.type" name="type" required placeholder="type" />
+      <input type="number" [(ngModel)]="editingNavire.capacite" name="capacite" required placeholder="Capacité" />
+
+      <button type="submit" class="save-btn">✅ Sauvegarder</button>
+      <button type="button" (click)="cancelEdit()" class="cancel-btn">❌ Annuler</button>
+    </form>
+  </div>
+</div>

@@ -17,63 +17,63 @@ import { ListEscalesComponent } from './pages/escales/list-escales/list-escales.
 import { ListDeclarationsComponent } from './pages/declarations/list-declarations/list-declarations.component';
 
 export const routes: Routes = [
- 
+
   {
-    path: 'home',
+    path: '',
     component: HomeComponent,
     pathMatch: 'full'
   },
-  { 
-    path: 'dashboard', 
+  {
+    path: 'dashboard',
     component: DashboardComponent
    },
     // Ports
-  { 
+  {
     path: 'ports/create',
     component: CreatePortComponent
    },
 
-  { 
-    path: 'ports', 
+  {
+    path: 'ports',
     component: ListPortsComponent
    },
 
   // Terminaux
-  { 
+  {
     path: 'terminaux/create',
     component: CreateTerminalComponent
   },
-  { 
+  {
     path: 'terminaux',
     component: ListTerminalsComponent
 
    },
 
   // Navires
-  { 
-    path: 'navires/create', 
-    component: CreateShipComponent 
+  {
+    path: 'navires/create',
+    component: CreateShipComponent
   },
 
-  { 
+  {
     path: 'navires',
     component: ListShipsComponent
-  
+
   },
 
   // Visites maritimes
-  { 
+  {
     path: 'escales/create',
-    component: CreateEscaleComponent 
+    component: CreateEscaleComponent
 
   },
 
-  { 
-    path: 'escales', 
-    component: ListEscalesComponent 
+  {
+    path: 'escales',
+    component: ListEscalesComponent
   },
 
   // Déclarations de marchandises
-  { 
+  {
     path: 'declarations', component: ListDeclarationsComponent },
 ];

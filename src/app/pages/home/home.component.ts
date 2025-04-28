@@ -1,22 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
+import { Component } from '@angular/core';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-  <div class="content">
-    <h2>Bienvenue dans la page d'accueil</h2>
-  </div>
-  `,
-  styles: [`
-    .content {
-      padding: 2rem;
-    }
-  `]
+  templateUrl: './home.component.html'
 })
-export class HomeComponent implements OnInit {
-  ngOnInit(): void {}
+export class HomeComponent {
+  constructor(private keycloakService: AuthService) {}
+
+
 }

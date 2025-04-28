@@ -1,4 +1,4 @@
-// src/app/app.config.ts
+
 import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { KeycloakService, KeycloakAngularModule } from 'keycloak-angular';
@@ -19,7 +19,7 @@ export function initializeKeycloak(keycloak: KeycloakService) {
         onLoad: 'login-required',
         checkLoginIframe: false
       },
-      bearerExcludedUrls: []
+      bearerExcludedUrls: ['./pages/home.component.html'],
     });
 }
 
