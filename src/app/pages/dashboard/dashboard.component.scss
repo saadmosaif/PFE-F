@@ -1,48 +1,106 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #eaf2fb, #ffffff); /* dégradé doux */
+  color: #333;
+}
+
 .dashboard-container {
-    text-align: center;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: auto;
+  text-align: center;
+  padding: 3rem 1rem;
+  max-width: 1300px;
+  margin: auto;
+}
+
+.logo {
+  max-width: 200px;
+  margin-bottom: 0.5rem;
+}
+
+/* Couleur du titre identique au bleu Marsa Maroc */
+.dashboard-title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #0073e6; /* couleur proche du bleu Marsa Maroc */
+  margin-top: 0.5;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+  animation-delay: 0.2s;
+}
+
+/* Grid avec animation */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: rem;
+  justify-items: center;
+  opacity: 0;
+  animation: fadeIn 1.2s ease-in-out forwards;
+  animation-delay: 0.6s;
+}
+
+/* Cartes */
+.dashboard-card {
+  background-color: white;
+  color: #333;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  max-width: 340px;
+  width: 100%;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+.dashboard-card h3 {
+  color: #0073e6;
+  border-bottom: 2px solid #0073e6;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.dashboard-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard-card li {
+  margin: 0.6rem 0;
+}
+
+.dashboard-card a {
+  text-decoration: none;
+  color: #0073e6;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.dashboard-card a:hover {
+  color: #0056b3;
+}
+
+/* Animation fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  
-  .logo {
-    width: 200px;
-    margin-bottom: 2rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .menu {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2rem;
-    text-align: left;
-  }
-  
-  .menu-section h3 {
-    color: #007bff;
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 0.3rem;
-  }
-  
-  .menu-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .menu-section li {
-    margin: 0.4rem 0;
-  }
-  
-  .menu-section a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  
-  .menu-section a:hover {
-    color: #0056b3;
-  }
-  
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}

@@ -1,1 +1,18 @@
-<p>navbar works!</p>
+<nav class="navbar">
+    <div class="navbar-left">
+      <a class="nav-link" (click)="goToDashboard()">
+        <i class="fas fa-home"></i> <span>Dashboard</span>
+      </a>
+    </div>
+  
+    <div class="navbar-right" *ngIf="user">
+      <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <span>{{ user.firstName }} {{ user.lastName }}</span>
+      </div>
+      <a class="nav-link logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span>
+      </a>
+    </div>
+  </nav>
+  
