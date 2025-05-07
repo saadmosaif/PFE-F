@@ -16,7 +16,7 @@
         <td>{{ terminal.type }}</td>
         <td>{{ terminal.numero }}</td>
         <td>{{ terminal.capacite }}</td>
-        <td>{{ terminal.port.codePort }}</td>
+        <td>{{ terminal.port?.codePort }}</td>
         <td class="actions">
           <button class="edit-btn" (click)="editTerminal(terminal)">✏️ Modifier</button>
           <button class="delete-btn" (click)="deleteTerminal(terminal.id)">🗑️ Supprimer</button>

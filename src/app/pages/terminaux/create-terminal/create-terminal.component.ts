@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { TerminalService } from '../../../services/terminal.service';
 import { Router } from '@angular/router';
+import { PortService } from '../../../services/port.service';
 
 
 @Component({
@@ -15,13 +16,15 @@ import { Router } from '@angular/router';
 export class CreateTerminalComponent {
   terminalFrom: FormGroup;
   submitted = false;
+  ports: any[] = [];
   successMessage = '';
   errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
     private terminalService: TerminalService,
-    private router: Router
+    private router: Router,
+    private portService: PortService
   ) {
     this.terminalFrom = this.fb.group({
       type: ['', Validators.required],
@@ -47,6 +50,10 @@ export class CreateTerminalComponent {
         ]
       ]
     });
+    this.portService.getPorts().subscribe({
+      next: data => this.ports = data,
+      error: err => console.error(err)
+    });
   }
 
   get f() {

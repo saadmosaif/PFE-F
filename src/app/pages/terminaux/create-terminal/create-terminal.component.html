@@ -1,15 +1,18 @@
 <div class="form-container">
-  <h2>Créer un Port</h2>
+  <h2>Créer un Terminal</h2>
 
   <form [formGroup]="terminalFrom" (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <label for="codePort">Code Port (5 lettres majuscules)</label>
-      <input id="codePort" formControlName="codePort" type="text" />
+      <label for="codePort">Sélectionner un Port</label>
+      <select id="codePort" formControlName="codePort">
+        <option value="">-- Sélectionner --</option>
+        <option *ngFor="let port of ports" [value]="port.codePort">{{ port.codePort }}</option>
+      </select>
       <div class="error" *ngIf="submitted && f['codePort'].errors">
         <span *ngIf="f['codePort'].errors['required']">Le code est requis.</span>
-        <span *ngIf="f['codePort'].errors['pattern']">5 lettres majuscules obligatoires.</span>
       </div>
     </div>
+
     <div class="form-group">
       <label for="type">type de terminal</label>
       <input id="type" formControlName="type" type="text" />
@@ -19,7 +22,7 @@
     </div>
 
     <div class="form-group">
-      <label for="numero">Capacité</label>
+      <label for="numero">Numéro</label>
       <input id="numero" formControlName="numero" type="number" />
       <div class="error" *ngIf="submitted && f['numero'].errors">
         <span *ngIf="f['numero'].errors['required']">La numero est requise.</span>
