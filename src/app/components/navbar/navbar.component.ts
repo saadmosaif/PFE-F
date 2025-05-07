@@ -1,28 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
-import { KeycloakProfile } from 'keycloak-js';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: "./navbar.component.html",
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  templateUrl: './navbar.component.html'
 })
-export class NavbarComponent implements OnInit {
-  user?: KeycloakProfile;
+export class NavbarComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
+  
+  userName = '';
+
+ngOnInit(): void {
+  const userInfo = this.authService.getUserInfo();
+  this.userName = userInfo?.preferred_username || 'Utilisateur';
+}
 
 
-  async ngOnInit(): Promise<void> {
-    this.user = await this.authService.getLoggedUser();
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   goToDashboard(): void {

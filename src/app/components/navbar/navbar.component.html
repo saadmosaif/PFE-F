@@ -6,10 +6,11 @@
     </a>
   </div>
 
-  <div class="navbar-right" *ngIf="user">
+  <div class="navbar-right" *ngIf="isLoggedIn()">
     <div class="user-info">
       <i class="fas fa-user-circle"></i>
-      <span>{{ user.firstName }} {{ user.lastName }}</span>
+      <span>{{ userName }}</span>
+      <!-- Remplace par un vrai nom si tu l'extrais du token -->
     </div>
     <a class="nav-link logout-btn" (click)="logout()">
       <i class="fas fa-sign-out-alt"></i>

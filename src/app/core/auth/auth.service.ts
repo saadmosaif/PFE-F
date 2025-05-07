@@ -1,56 +1,44 @@
 import { Injectable } from '@angular/core';
-  import Keycloak, { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class AuthService {  // ✅ LE MOT "export" EST ESSENTIEL !
-  private keycloak: KeycloakInstance;
+export class AuthService {
 
-  constructor() {
-    this.keycloak = new Keycloak({
-      url: 'http://localhost:8080',
-      realm: 'gep-realm',
-      clientId: 'gep-frontend',
-    });
+  private readonly AUTH_API = 'http://localhost:8081/api/auth/login';
+  private readonly TOKEN_KEY = 'auth-token';
+
+  constructor(private http: HttpClient) {}
+
+  login(username: string, password: string): Observable<any> {
+    return this.http.post<any>(this.AUTH_API, { username, password }).pipe(
+      tap(response => {
+        localStorage.setItem(this.TOKEN_KEY, response.access_token);
+      })
+    );
   }
 
-  async init(): Promise<void> {
-    await this.keycloak.init({
-      onLoad: 'login-required',
-      checkLoginIframe: false,
-      redirectUri: window.location.origin + '/dashboard',
-    });
-  }
-
-  async getLoggedUser(): Promise<KeycloakProfile> {
-    if (!this.keycloak.authenticated) {
-      throw new Error('User not authenticated');
-    }
-    return await this.keycloak.loadUserProfile();
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   logout(): void {
-    this.keycloak.logout({ redirectUri: window.location.origin });
-  }
-
-  getRoles(): string[] {
-    return this.keycloak.realmAccess?.roles || [];
+    localStorage.removeItem(this.TOKEN_KEY);
   }
 
   isLoggedIn(): boolean {
-    return !!this.keycloak.authenticated;
+    return !!this.getToken();
   }
-
-  isUserInRole(role: string): boolean {
-    return this.keycloak.hasRealmRole(role);
+  getUserInfo(): any {
+    const token = this.getToken();
+    if (!token) return null;
+  
+    const payload = token.split('.')[1];
+    const decoded = atob(payload);
+    return JSON.parse(decoded);
   }
-
-  getToken(): string | undefined {
-    return this.keycloak.token;
-  }
-
-  getKeycloakInstance(): KeycloakInstance {
-    return this.keycloak;
-  }
+  
 }

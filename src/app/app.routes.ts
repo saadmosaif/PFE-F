@@ -1,7 +1,9 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
+
+import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+
 import { CreatePortComponent } from './pages/ports/create-port/create-port.component';
 import { ListPortsComponent } from './pages/ports/list-ports/list-ports.component';
 
@@ -16,64 +18,72 @@ import { ListEscalesComponent } from './pages/escales/list-escales/list-escales.
 
 import { ListDeclarationsComponent } from './pages/declarations/list-declarations/list-declarations.component';
 
-export const routes: Routes = [
+import { authGuard } from './core/auth/auth.guard';
 
+export const routes: Routes = [
+  {
+    path: 'login',
+    component: LoginComponent
+  },
   {
     path: '',
     component: HomeComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [authGuard]
   },
   {
     path: 'dashboard',
-    component: DashboardComponent
-   },
-    // Ports
+    component: DashboardComponent,
+    canActivate: [authGuard]
+  },
+  // Ports
   {
     path: 'ports/create',
-    component: CreatePortComponent
-   },
-
+    component: CreatePortComponent,
+    canActivate: [authGuard]
+  },
   {
     path: 'ports',
-    component: ListPortsComponent
-   },
-
+    component: ListPortsComponent,
+    canActivate: [authGuard]
+  },
   // Terminaux
   {
     path: 'terminaux/create',
-    component: CreateTerminalComponent
+    component: CreateTerminalComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'terminaux',
-    component: ListTerminalsComponent
-
-   },
-
+    component: ListTerminalsComponent,
+    canActivate: [authGuard]
+  },
   // Navires
   {
     path: 'navires/create',
-    component: CreateShipComponent
+    component: CreateShipComponent,
+    canActivate: [authGuard]
   },
-
   {
     path: 'navires',
-    component: ListShipsComponent
-
+    component: ListShipsComponent,
+    canActivate: [authGuard]
   },
-
   // Visites maritimes
   {
     path: 'escales/create',
-    component: CreateEscaleComponent
-
+    component: CreateEscaleComponent,
+    canActivate: [authGuard]
   },
-
   {
     path: 'escales',
-    component: ListEscalesComponent
+    component: ListEscalesComponent,
+    canActivate: [authGuard]
   },
-
   // Déclarations de marchandises
   {
-    path: 'declarations', component: ListDeclarationsComponent },
+    path: 'declarations',
+    component: ListDeclarationsComponent,
+    canActivate: [authGuard]
+  }
 ];

@@ -1,0 +1,19 @@
+<div style="max-width: 400px; margin: auto; padding: 2rem;">
+    <h2>Connexion</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div>
+        <label>Nom d'utilisateur</label>
+        <input type="text" [(ngModel)]="username" name="username" required />
+      </div>
+      <div style="margin-top: 1rem;">
+        <label>Mot de passe</label>
+        <input type="password" [(ngModel)]="password" name="password" required />
+      </div>
+      <button type="submit" style="margin-top: 1rem;">Se connecter</button>
+    </form>
+  
+    <div *ngIf="error" style="color: red; margin-top: 1rem;">
+      {{ error }}
+    </div>
+  </div>
+  

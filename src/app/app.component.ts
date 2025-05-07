@@ -1,15 +1,15 @@
 // src/app/app.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './components/navbar/navbar.component'; // 👈 ajuste le chemin si besoin
+import { RouterOutlet, Router } from '@angular/router';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NavbarComponent],
   template: `
-    <app-navbar></app-navbar>
+    <app-navbar *ngIf="!isLoginPage()"></app-navbar>
     <router-outlet></router-outlet>
   `,
   styles: [`
@@ -18,4 +18,10 @@ import { NavbarComponent } from './components/navbar/navbar.component'; // 👈 
     }
   `]
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private router: Router) {}
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
+  }
+}
