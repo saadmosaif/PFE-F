@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Keycloak, { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
+  import Keycloak, { KeycloakInstance, KeycloakProfile } from 'keycloak-js';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class AuthService {  // ✅ LE MOT "export" EST ESSENTIEL !
     await this.keycloak.init({
       onLoad: 'login-required',
       checkLoginIframe: false,
-      redirectUri: window.location.origin + '/dashboard', // <-- ✅ redirection vers /home
+      redirectUri: window.location.origin + '/dashboard',
     });
   }
 

@@ -8,21 +8,8 @@ import { Router } from '@angular/router';
   selector: 'app-navbar',
   standalone: true,
   imports: [CommonModule],
-  styleUrls: ['./navbar.component.scss'],
-  template: `
-
-    <nav class="navbar">
-      <div class="navbar-left">
-        <button (click)="goToDashboard()">🏠 Dashboard</button>
-      </div>
-      <div class="navbar-right">
-        <span *ngIf="user">👤 {{ user.firstName }} {{ user.lastName }}</span>
-        &nbsp;&nbsp;
-        <button (click)="logout()">Se déconnecter</button>
-      </div>
-
-    </nav>
-  `
+  templateUrl: "./navbar.component.html",
+  styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
   user?: KeycloakProfile;

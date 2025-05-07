@@ -38,6 +38,7 @@ export class PortService {
     return this.http.post(this.apiUrl, portData, { headers });
   }
 
+
   getPorts(): Observable<Port[]> {
     const token = this.authService.getToken();
 
@@ -61,10 +62,10 @@ export class PortService {
     });
     return this.http.put(`${this.apiUrl}/${id}`, portData, { headers });
   }
-  
-  
-  
-  
+
+
+
+
 
   deletePort(id: number): Observable<void> {
     const token = this.authService.getToken();
