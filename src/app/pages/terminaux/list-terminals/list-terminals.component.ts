@@ -24,14 +24,15 @@ export class ListTerminalsComponent implements OnInit {
   loadTerminaux(): void {
     this.terminalService.getTerminaux().subscribe({
       next: (data) => {
-        console.log('terminaux récupérés:', data);
+        console.log('🔵 Terminaux reçus du backend :', data);
         this.terminaux = data;
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des terminaux :', err);
+        console.error('❌ Erreur lors du chargement des terminaux :', err);
       }
     });
   }
+  
 
   deleteTerminal(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce terminal ?')) {
@@ -81,4 +82,5 @@ export class ListTerminalsComponent implements OnInit {
   cancelEdit(): void {
     this.editingTerminal = null;
   }
+  
 }
