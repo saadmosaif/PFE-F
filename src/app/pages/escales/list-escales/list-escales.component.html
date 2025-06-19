@@ -1,1 +1,149 @@
-<p>list-escales works!</p>
+<div class="container">
+  <h2>Consulter les Visites Maritimes</h2>
+
+  <div class="search-container">
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="numeroVisite">Numéro de visite</label>
+          <input id="numeroVisite" formControlName="numeroVisite" type="text" />
+        </div>
+
+        <div class="form-group">
+          <label for="numeroAD">Numéro AD</label>
+          <input id="numeroAD" formControlName="numeroAD" type="text" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="eta">ETA</label>
+          <input id="eta" formControlName="eta" type="date" />
+        </div>
+
+        <div class="form-group">
+          <label for="etd">ETD</label>
+          <input id="etd" formControlName="etd" type="date" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Statut</label>
+        <div class="checkbox-group" formGroupName="statuts">
+          <div class="checkbox-item" *ngFor="let option of statusOptions">
+            <input
+              type="checkbox"
+              [id]="option.value"
+              [formControlName]="option.value"
+            />
+            <label [for]="option.value">{{ option.label }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="numeroDap">Numéro DAP</label>
+          <input id="numeroDap" formControlName="numeroDap" type="text" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="agentMaritimeSearch">Agent maritime</label>
+          <div class="autocomplete-container">
+            <input
+              id="agentMaritimeSearch"
+              type="text"
+              formControlName="agentMaritimeSearch"
+              placeholder="Rechercher un agent"
+              (focus)="showAgentDropdown = true"
+            />
+            <div class="autocomplete-dropdown" *ngIf="showAgentDropdown">
+              <div
+                class="autocomplete-item"
+                *ngFor="let agent of filteredAgents"
+                (click)="selectAgent(agent)"
+              >
+                {{ agent.compagnie }}
+              </div>
+              <div class="autocomplete-item no-results" *ngIf="filteredAgents.length === 0">
+                Aucun résultat
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="navireSearch">Navire</label>
+          <div class="autocomplete-container">
+            <input
+              id="navireSearch"
+              type="text"
+              formControlName="navireSearch"
+              placeholder="Rechercher un navire"
+              (focus)="showNavireDropdown = true"
+            />
+            <div class="autocomplete-dropdown" *ngIf="showNavireDropdown">
+              <div
+                class="autocomplete-item"
+                *ngFor="let navire of filteredNavires"
+                (click)="selectNavire(navire)"
+              >
+                {{ navire.nom }}
+              </div>
+              <div class="autocomplete-item no-results" *ngIf="filteredNavires.length === 0">
+                Aucun résultat
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit">Rechercher</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="results-container" *ngIf="!loading">
+    <table *ngIf="escales.length > 0">
+      <thead>
+        <tr>
+          <th>Numéro de visite</th>
+          <th>Agent maritime</th>
+          <th>Navire</th>
+          <th>ETA</th>
+          <th>ETD</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let escale of escales" (click)="viewEscale(escale.id)">
+          <td>{{ escale.numeroVisite }}</td>
+          <td>{{ escale.agentMaritime.compagnie }}</td>
+          <td>{{ escale.navire.nom }}</td>
+          <td>{{ escale.eta | date:'dd/MM/yyyy' }}</td>
+          <td>{{ escale.etd | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="escale.status.toLowerCase()">
+              {{ escale.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-results" *ngIf="escales.length === 0">
+      Aucune visite maritime trouvée.
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    Chargement en cours...
+  </div>
+
+  <div class="error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>

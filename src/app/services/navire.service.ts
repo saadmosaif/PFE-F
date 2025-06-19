@@ -30,6 +30,7 @@ export interface Client {
 })
 export class NavireService {
   private apiUrl = 'http://localhost:8082/api/navires';
+  private clientsUrl = 'http://localhost:8082/api/clients';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -76,5 +77,20 @@ export class NavireService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+  }
+
+  getClients(): Observable<Client[]> {
+    const token = this.authService.getToken();
+
+    if (!token) {
+      console.error('Token manquant, utilisateur non authentifié.');
+      return throwError(() => new Error('Utilisateur non authentifié.'));
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get<Client[]>(`${this.clientsUrl}/all`, { headers });
   }
 }

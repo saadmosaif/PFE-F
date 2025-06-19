@@ -1,0 +1,450 @@
+<div class="container" *ngIf="!loading && escale">
+  <div class="back-button">
+    <button (click)="goBack()" class="secondary-button">← Retour</button>
+  </div>
+
+  <!-- Escale information -->
+  <div class="escale-header">
+    <h2>Déclarations de Marchandises: {{ escale.numeroVisite }}</h2>
+
+    <div class="escale-info">
+      <div class="info-group">
+        <div class="info-item">
+          <span class="label">Numéro de visite:</span>
+          <span class="value">{{ escale.numeroVisite }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Numéro AD:</span>
+          <span class="value">{{ escale.numeroAD || 'Non défini' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Terminal:</span>
+          <span class="value">{{ escale.terminal || 'Non défini' }}</span>
+        </div>
+      </div>
+
+      <div class="info-group">
+        <div class="info-item">
+          <span class="label">Navire:</span>
+          <span class="value">{{ escale.navire?.nom || 'Non défini' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Agent maritime:</span>
+          <span class="value">{{ escale.agentMaritime?.compagnie || 'Non défini' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Statut:</span>
+          <span class="value status-badge" [ngClass]="escale.status?.toLowerCase() || ''">
+            {{ escale.status || 'Non défini' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <!-- Tabs navigation -->
+    <div class="tabs-nav">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'connaissements'"
+        (click)="setActiveTab('connaissements')"
+      >
+        Connaissements
+      </button>
+
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'conteneurs'"
+        (click)="setActiveTab('conteneurs')"
+      >
+        Conteneurs
+      </button>
+
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'roros'"
+        (click)="setActiveTab('roros')"
+      >
+        RORO
+      </button>
+
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'divers'"
+        (click)="setActiveTab('divers')"
+      >
+        Divers
+      </button>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+      <!-- Connaissements Tab -->
+      <div *ngIf="activeTab === 'connaissements'" class="tab-pane">
+        <div class="tab-header">
+          <h3>Connaissements</h3>
+          <button class="primary-button" (click)="openConnaissementModal()">+ Ajouter</button>
+        </div>
+
+        <table *ngIf="connaissements.length > 0">
+          <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Type</th>
+              <th>Agent maritime</th>
+              <th>Port de provenance</th>
+              <th>Port de destination</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let connaissement of connaissements">
+              <td>{{ connaissement.numeroConnaissement }}</td>
+              <td>{{ connaissement.typeContenant }}</td>
+              <td>{{ connaissement.agentMaritime }}</td>
+              <td>{{ connaissement.portProvenance }}</td>
+              <td>{{ connaissement.portDestination }}</td>
+              <td class="actions">
+                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button delete" title="Supprimer" (click)="deleteConnaissement(connaissement.id)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="no-data" *ngIf="connaissements.length === 0">
+          Aucun connaissement disponible.
+        </div>
+      </div>
+
+      <!-- Conteneurs Tab -->
+      <div *ngIf="activeTab === 'conteneurs'" class="tab-pane">
+        <div class="tab-header">
+          <h3>Conteneurs</h3>
+          <button class="primary-button" (click)="openConteneurModal()">+ Ajouter</button>
+        </div>
+
+        <table *ngIf="conteneurs.length > 0">
+          <thead>
+            <tr>
+              <th>Connaissement</th>
+              <th>Numéro</th>
+              <th>Code ISO</th>
+              <th>Type</th>
+              <th>Dimensions</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let conteneur of conteneurs">
+              <td>{{ conteneur.connaissement.numeroConnaissement }}</td>
+              <td>{{ conteneur.numeroConteneur }}</td>
+              <td>{{ conteneur.codeISO }}</td>
+              <td>{{ conteneur.typeConteneur }}</td>
+              <td>{{ conteneur.dimensions }}</td>
+              <td class="actions">
+                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button delete" title="Supprimer" (click)="deleteConteneur(conteneur.id)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="no-data" *ngIf="conteneurs.length === 0">
+          Aucun conteneur disponible.
+        </div>
+      </div>
+
+      <!-- RORO Tab -->
+      <div *ngIf="activeTab === 'roros'" class="tab-pane">
+        <div class="tab-header">
+          <h3>RORO</h3>
+          <button class="primary-button" (click)="openRoroModal()">+ Ajouter</button>
+        </div>
+
+        <table *ngIf="roros.length > 0">
+          <thead>
+            <tr>
+              <th>Connaissement</th>
+              <th>Numéro d'identification</th>
+              <th>Marque</th>
+              <th>Modèle</th>
+              <th>Poids</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let roro of roros">
+              <td>{{ roro.connaissement.numeroConnaissement }}</td>
+              <td>{{ roro.numeroIdentification }}</td>
+              <td>{{ roro.marque }}</td>
+              <td>{{ roro.modele }}</td>
+              <td>{{ roro.poids }} kg</td>
+              <td class="actions">
+                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button delete" title="Supprimer" (click)="deleteRoro(roro.id)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="no-data" *ngIf="roros.length === 0">
+          Aucun RORO disponible.
+        </div>
+      </div>
+
+      <!-- Divers Tab -->
+      <div *ngIf="activeTab === 'divers'" class="tab-pane">
+        <div class="tab-header">
+          <h3>Divers</h3>
+          <button class="primary-button" (click)="openDiversModal()">+ Ajouter</button>
+        </div>
+
+        <table *ngIf="divers.length > 0">
+          <thead>
+            <tr>
+              <th>Connaissement</th>
+              <th>Description</th>
+              <th>Quantité</th>
+              <th>Poids</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of divers">
+              <td>{{ item.connaissement.numeroConnaissement }}</td>
+              <td>{{ item.description }}</td>
+              <td>{{ item.quantite }}</td>
+              <td>{{ item.poids }} kg</td>
+              <td class="actions">
+                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button delete" title="Supprimer" (click)="deleteDivers(item.id)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="no-data" *ngIf="divers.length === 0">
+          Aucun élément divers disponible.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Connaissement Modal -->
+  <div class="modal" *ngIf="showConnaissementModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un connaissement</h3>
+        <button class="close-button" (click)="closeConnaissementModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="connaissementForm" (ngSubmit)="submitConnaissement()">
+          <div class="form-group">
+            <label for="numeroConnaissement">Numéro de connaissement</label>
+            <input id="numeroConnaissement" formControlName="numeroConnaissement" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="agentMaritime">Agent maritime</label>
+            <input id="agentMaritime" formControlName="agentMaritime" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="sensTrafic">Sens de trafic</label>
+            <select id="sensTrafic" formControlName="sensTrafic">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let option of sensTraficOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="portProvenance">Port de provenance</label>
+            <input id="portProvenance" formControlName="portProvenance" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="portDestination">Port de destination</label>
+            <input id="portDestination" formControlName="portDestination" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="typeContenant">Type de contenant</label>
+            <select id="typeContenant" formControlName="typeContenant">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let option of typeContenantOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="nombreUnites">Nombre d'unités</label>
+            <input id="nombreUnites" formControlName="nombreUnites" type="number" min="1" />
+          </div>
+
+          <div class="form-group">
+            <label for="volume">Volume</label>
+            <input id="volume" formControlName="volume" type="number" min="0" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-button" [disabled]="connaissementForm.invalid">Enregistrer</button>
+            <button type="button" class="secondary-button" (click)="closeConnaissementModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteneur Modal -->
+  <div class="modal" *ngIf="showConteneurModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un conteneur</h3>
+        <button class="close-button" (click)="closeConteneurModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="conteneurForm" (ngSubmit)="submitConteneur()">
+          <div class="form-group">
+            <label for="connaissementId">Connaissement</label>
+            <select id="connaissementId" formControlName="connaissementId">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let connaissement of connaissements" [value]="connaissement.id">
+                {{ connaissement.numeroConnaissement }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="numeroConteneur">Numéro de conteneur</label>
+            <input id="numeroConteneur" formControlName="numeroConteneur" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="codeISO">Code ISO</label>
+            <input id="codeISO" formControlName="codeISO" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="typeConteneur">Type de conteneur</label>
+            <select id="typeConteneur" formControlName="typeConteneur">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let option of typeConteneurOptions" [value]="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="dimensions">Dimensions</label>
+            <input id="dimensions" formControlName="dimensions" type="text" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-button" [disabled]="conteneurForm.invalid">Enregistrer</button>
+            <button type="button" class="secondary-button" (click)="closeConteneurModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- RORO Modal -->
+  <div class="modal" *ngIf="showRoroModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un RORO</h3>
+        <button class="close-button" (click)="closeRoroModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="roroForm" (ngSubmit)="submitRoro()">
+          <div class="form-group">
+            <label for="roroConnaissementId">Connaissement</label>
+            <select id="roroConnaissementId" formControlName="connaissementId">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let connaissement of connaissements" [value]="connaissement.id">
+                {{ connaissement.numeroConnaissement }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="numeroIdentification">Numéro d'identification</label>
+            <input id="numeroIdentification" formControlName="numeroIdentification" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="marque">Marque</label>
+            <input id="marque" formControlName="marque" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="modele">Modèle</label>
+            <input id="modele" formControlName="modele" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="poids">Poids (kg)</label>
+            <input id="poids" formControlName="poids" type="number" min="0" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-button" [disabled]="roroForm.invalid">Enregistrer</button>
+            <button type="button" class="secondary-button" (click)="closeRoroModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Divers Modal -->
+  <div class="modal" *ngIf="showDiversModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un élément divers</h3>
+        <button class="close-button" (click)="closeDiversModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="diversForm" (ngSubmit)="submitDivers()">
+          <div class="form-group">
+            <label for="diversConnaissementId">Connaissement</label>
+            <select id="diversConnaissementId" formControlName="connaissementId">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let connaissement of connaissements" [value]="connaissement.id">
+                {{ connaissement.numeroConnaissement }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input id="description" formControlName="description" type="text" />
+          </div>
+
+          <div class="form-group">
+            <label for="quantite">Quantité</label>
+            <input id="quantite" formControlName="quantite" type="number" min="1" />
+          </div>
+
+          <div class="form-group">
+            <label for="diversPoids">Poids (kg)</label>
+            <input id="diversPoids" formControlName="poids" type="number" min="0" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-button" [disabled]="diversForm.invalid">Enregistrer</button>
+            <button type="button" class="secondary-button" (click)="closeDiversModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  Chargement en cours...
+</div>
+
+<div class="error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>

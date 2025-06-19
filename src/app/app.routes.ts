@@ -15,8 +15,10 @@ import { ListShipsComponent } from './pages/navires/list-ships/list-ships.compon
 
 import { CreateEscaleComponent } from './pages/escales/create-escale/create-escale.component';
 import { ListEscalesComponent } from './pages/escales/list-escales/list-escales.component';
+import { ViewEscaleComponent } from './pages/escales/view-escale/view-escale.component';
 
 import { ListDeclarationsComponent } from './pages/declarations/list-declarations/list-declarations.component';
+import { ViewDeclarationComponent } from './pages/declarations/view-declaration/view-declaration.component';
 
 import { authGuard } from './core/auth/auth.guard';
 
@@ -80,10 +82,20 @@ export const routes: Routes = [
     component: ListEscalesComponent,
     canActivate: [authGuard]
   },
+  {
+    path: 'escales/:id',
+    component: ViewEscaleComponent,
+    canActivate: [authGuard]
+  },
   // Déclarations de marchandises
   {
     path: 'declarations',
     component: ListDeclarationsComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'declarations/:id',
+    component: ViewDeclarationComponent,
     canActivate: [authGuard]
   }
 ];

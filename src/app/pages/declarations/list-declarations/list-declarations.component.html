@@ -1,1 +1,105 @@
-<p>list-declarations works!</p>
+<div class="container">
+  <h2>Consulter les Déclarations de Marchandises</h2>
+
+  <div class="search-container">
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="numeroConnaissement">Numéro de connaissement</label>
+          <input id="numeroConnaissement" formControlName="numeroConnaissement" type="text" />
+        </div>
+
+        <div class="form-group">
+          <label for="escaleId">Numéro de visite</label>
+          <input id="escaleId" formControlName="escaleId" type="text" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="agentMaritimeSearch">Agent maritime</label>
+          <div class="autocomplete-container">
+            <input
+              id="agentMaritimeSearch"
+              type="text"
+              formControlName="agentMaritimeSearch"
+              placeholder="Rechercher un agent"
+              (focus)="showAgentDropdown = true"
+            />
+            <div class="autocomplete-dropdown" *ngIf="showAgentDropdown">
+              <div
+                class="autocomplete-item"
+                *ngFor="let agent of filteredAgents"
+                (click)="selectAgent(agent)"
+              >
+                {{ agent.compagnie }}
+              </div>
+              <div class="autocomplete-item no-results" *ngIf="filteredAgents.length === 0">
+                Aucun résultat
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sensTrafic">Sens de trafic</label>
+          <select id="sensTrafic" formControlName="sensTrafic">
+            <option value="">Tous</option>
+            <option *ngFor="let option of sensTraficOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="typeContenant">Type de contenant</label>
+          <select id="typeContenant" formControlName="typeContenant">
+            <option value="">Tous</option>
+            <option *ngFor="let option of typeContenantOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit">Rechercher</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="results-container" *ngIf="!loading">
+    <table *ngIf="connaissements.length > 0">
+      <thead>
+        <tr>
+          <th>Numéro de connaissement</th>
+          <th>Visite maritime</th>
+          <th>Agent maritime</th>
+          <th>Sens de trafic</th>
+          <th>Type de contenant</th>
+          <th>Nombre d'unités</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let connaissement of connaissements" (click)="viewConnaissement(connaissement.visiteMaritimeId)">
+          <td>{{ connaissement.numeroConnaissement }}</td>
+          <td>{{ connaissement.numeroVisite }}</td>
+          <td>{{ connaissement.agentMaritime }}</td>
+          <td>{{ connaissement.sensTrafic }}</td>
+          <td>{{ connaissement.typeContenant }}</td>
+          <td>{{ connaissement.nombreUnites }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-results" *ngIf="connaissements.length === 0">
+      Aucune déclaration de marchandise trouvée.
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    Chargement en cours...
+  </div>
+
+  <div class="error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
