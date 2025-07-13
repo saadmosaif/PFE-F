@@ -94,6 +94,13 @@ export class ListVisiteMaritimeComponent implements OnInit {
     });
     this.searchVisitesMaritimes();
   }
+  formatDateTime(value: string): string | undefined {
+    if (!value) return undefined;
+    // Convert to 'yyyy-MM-ddTHH:mm:ss' format expected by Spring
+    const date = new Date(value);
+    return date.toISOString().slice(0, 19);
+  }
+
 
   ngOnInit(): void {
     this.loadNavires();
@@ -266,12 +273,11 @@ export class ListVisiteMaritimeComponent implements OnInit {
       numeroAD: this.searchForm.get('numeroAD')?.value || undefined,
 
       // Advanced search criteria
-      etaDebut: this.searchForm.get('etaDebut')?.value || undefined,
-      etaFin: this.searchForm.get('etaFin')?.value || undefined,
-      etdDebut: this.searchForm.get('etdDebut')?.value || undefined,
-      etdFin: this.searchForm.get('etdFin')?.value || undefined,
+      etaDebut: this.formatDateTime(this.searchForm.get('etaDebut')?.value),
+      etaFin: this.formatDateTime(this.searchForm.get('etaFin')?.value),
+      etdDebut: this.formatDateTime(this.searchForm.get('etdDebut')?.value),
+      etdFin: this.formatDateTime(this.searchForm.get('etdFin')?.value),
       numeroDap: this.searchForm.get('numeroDap')?.value || undefined,
-      terminal: this.searchForm.get('terminal')?.value || undefined,
       agentMaritimeId: this.searchForm.get('agentMaritimeId')?.value || undefined,
       navireId: this.searchForm.get('navireId')?.value || undefined
     };
