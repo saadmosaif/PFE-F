@@ -1,19 +1,35 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 }
 
 .header-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
 }
 
 h2 {
   margin: 0;
   color: #333;
+  font-size: 1.5rem;
+
+  @media (min-width: 768px) {
+    font-size: 1.8rem;
+  }
 }
 
 .create-button {
@@ -26,6 +42,12 @@ h2 {
   font-weight: bold;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
 }
 
 .create-button:hover {
@@ -36,19 +58,61 @@ h2 {
   background: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+.search-toggle {
+  margin-bottom: 1rem;
+
+  .toggle-button {
+    background-color: #6c757d;
+    width: 100%;
+
+    &:hover {
+      background-color: #5a6268;
+    }
+
+    @media (min-width: 768px) {
+      width: auto;
+    }
+  }
+}
+
+.responsive-form {
+  width: 100%;
 }
 
 .form-row {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    margin-bottom: 1.5rem;
+  }
 }
 
 .form-group {
   flex: 1;
   margin-bottom: 1rem;
+
+  &.col-md-6 {
+    @media (min-width: 768px) {
+      width: 50%;
+    }
+  }
+
+  &.col-sm-12 {
+    width: 100%;
+  }
 }
 
 label {
@@ -58,6 +122,14 @@ label {
 }
 
 input, select {
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-control {
   width: 100%;
   padding: 0.5rem;
   box-sizing: border-box;

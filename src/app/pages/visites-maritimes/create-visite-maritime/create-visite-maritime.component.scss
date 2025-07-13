@@ -76,6 +76,18 @@ input, select {
   margin-top: 0.25rem;
 }
 
+.info-message {
+  color: #0056b3;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  background-color: #e3f2fd;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+  display: flex;
+  align-items: center;
+}
+
 .form-actions {
   display: flex;
   justify-content: center;

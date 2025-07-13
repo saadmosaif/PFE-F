@@ -22,6 +22,9 @@ export class ListVisiteMaritimeComponent implements OnInit {
   loading = true;
   errorMessage = '';
 
+  // Advanced search toggle
+  showAdvancedSearch = false;
+
   // Autocompletion
   filteredNavires: Navire[] = [];
   filteredAgents: Client[] = [];
@@ -44,10 +47,15 @@ export class ListVisiteMaritimeComponent implements OnInit {
     private router: Router
   ) {
     this.searchForm = this.fb.group({
+      // Basic search fields
       numeroVisite: [''],
       numeroAD: [''],
-      eta: [''],
-      etd: [''],
+
+      // Advanced search fields
+      etaDebut: [''],
+      etaFin: [''],
+      etdDebut: [''],
+      etdFin: [''],
       statuts: this.fb.group({
         PREVU: [true],
         VALIDE: [true],
@@ -56,11 +64,35 @@ export class ListVisiteMaritimeComponent implements OnInit {
         ANNULE: [true]
       }),
       numeroDap: [''],
+      terminal: [''],
       agentMaritimeId: [''],
       navireId: [''],
       agentMaritimeSearch: [''],
       navireSearch: ['']
     });
+  }
+
+  /**
+   * Toggles the advanced search panel visibility
+   */
+  toggleAdvancedSearch(): void {
+    this.showAdvancedSearch = !this.showAdvancedSearch;
+  }
+
+  /**
+   * Resets the search form to its initial state
+   */
+  resetForm(): void {
+    this.searchForm.reset({
+      statuts: {
+        PREVU: true,
+        VALIDE: true,
+        ACTIVE: true,
+        CLOTURE: true,
+        ANNULE: true
+      }
+    });
+    this.searchVisitesMaritimes();
   }
 
   ngOnInit(): void {
@@ -229,11 +261,17 @@ export class ListVisiteMaritimeComponent implements OnInit {
     this.errorMessage = '';
 
     const criteria: VisiteMaritimeSearchCriteria = {
+      // Basic search criteria
       numeroVisite: this.searchForm.get('numeroVisite')?.value || undefined,
       numeroAD: this.searchForm.get('numeroAD')?.value || undefined,
-      eta: this.searchForm.get('eta')?.value || undefined,
-      etd: this.searchForm.get('etd')?.value || undefined,
+
+      // Advanced search criteria
+      etaDebut: this.searchForm.get('etaDebut')?.value || undefined,
+      etaFin: this.searchForm.get('etaFin')?.value || undefined,
+      etdDebut: this.searchForm.get('etdDebut')?.value || undefined,
+      etdFin: this.searchForm.get('etdFin')?.value || undefined,
       numeroDap: this.searchForm.get('numeroDap')?.value || undefined,
+      terminal: this.searchForm.get('terminal')?.value || undefined,
       agentMaritimeId: this.searchForm.get('agentMaritimeId')?.value || undefined,
       navireId: this.searchForm.get('navireId')?.value || undefined
     };

@@ -14,12 +14,22 @@ export enum VisiteMaritimeStatus {
 }
 
 export interface VisiteMaritimeSearchCriteria {
+  // Basic search criteria
   numeroVisite?: string;
   numeroAD?: string;
-  eta?: string;
-  etd?: string;
+
+  // Date range search criteria
+  eta?: string; // Deprecated, use etaDebut and etaFin instead
+  etd?: string; // Deprecated, use etdDebut and etdFin instead
+  etaDebut?: string;
+  etaFin?: string;
+  etdDebut?: string;
+  etdFin?: string;
+
+  // Other search criteria
   statuts?: VisiteMaritimeStatus[];
   numeroDap?: string;
+  terminal?: string;
   agentMaritimeId?: number;
   navireId?: number;
 }

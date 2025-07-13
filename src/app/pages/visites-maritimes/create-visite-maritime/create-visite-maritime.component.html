@@ -11,16 +11,32 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="numeroVisite">Numéro de visite *</label>
-          <input id="numeroVisite" formControlName="numeroVisite" type="text" />
-          <div class="error-message" *ngIf="visiteMaritimeForm.get('numeroVisite')?.invalid && visiteMaritimeForm.get('numeroVisite')?.touched">
-            Le numéro de visite est requis
+          <label for="terminalSearch">Terminal</label>
+          <div class="autocomplete-container">
+            <input
+              id="terminalSearch"
+              type="text"
+              formControlName="terminalSearch"
+              placeholder="Rechercher un terminal"
+              (focus)="showTerminalDropdown = true"
+            />
+            <div class="autocomplete-dropdown" *ngIf="showTerminalDropdown">
+              <div
+                class="autocomplete-item"
+                *ngFor="let terminal of filteredTerminals"
+                (click)="selectTerminal(terminal)"
+              >
+                {{ terminal.numero }} ({{ terminal.type }})
+              </div>
+              <div class="autocomplete-item no-results" *ngIf="filteredTerminals.length === 0">
+                Aucun résultat
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="terminal">Terminal</label>
-          <input id="terminal" formControlName="terminal" type="text" />
+          <p class="info-message">Le numéro de visite sera généré automatiquement</p>
         </div>
       </div>
 
@@ -87,13 +103,11 @@
       <div [formGroup]="adForm">
         <div class="form-row">
           <div class="form-group">
-            <label for="numeroAD">Numéro AD *</label>
-            <input id="numeroAD" formControlName="numeroAD" type="text" />
-            <div class="error-message" *ngIf="adForm.get('numeroAD')?.invalid && adForm.get('numeroAD')?.touched">
-              Le numéro AD est requis
-            </div>
+            <p class="info-message">Le numéro AD sera généré automatiquement</p>
           </div>
+        </div>
 
+        <div class="form-row">
           <div class="form-group">
             <label for="dateETA">Date ETA *</label>
             <input id="dateETA" formControlName="dateETA" type="date" />
@@ -101,21 +115,69 @@
               La date ETA est requise
             </div>
           </div>
+
+          <div class="form-group">
+            <label for="dateETD">Date ETD *</label>
+            <input id="dateETD" formControlName="dateETD" type="date" />
+            <div class="error-message" *ngIf="adForm.get('dateETD')?.invalid && adForm.get('dateETD')?.touched">
+              La date ETD est requise
+            </div>
+          </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="portProvenance">Port de provenance *</label>
-            <input id="portProvenance" formControlName="portProvenance" type="text" />
-            <div class="error-message" *ngIf="adForm.get('portProvenance')?.invalid && adForm.get('portProvenance')?.touched">
+            <label for="portProvenanceSearch">Port de provenance *</label>
+            <div class="autocomplete-container">
+              <input
+                id="portProvenanceSearch"
+                type="text"
+                formControlName="portProvenanceSearch"
+                placeholder="Rechercher un port de provenance"
+                (focus)="showPortProvenanceDropdown = true"
+              />
+              <div class="autocomplete-dropdown" *ngIf="showPortProvenanceDropdown">
+                <div
+                  class="autocomplete-item"
+                  *ngFor="let port of filteredPorts"
+                  (click)="selectPortProvenance(port)"
+                >
+                  {{ port.nomPort }}
+                </div>
+                <div class="autocomplete-item no-results" *ngIf="filteredPorts.length === 0">
+                  Aucun résultat
+                </div>
+              </div>
+            </div>
+            <div class="error-message" *ngIf="adForm.get('portProvenanceSearch')?.invalid && adForm.get('portProvenanceSearch')?.touched">
               Le port de provenance est requis
             </div>
           </div>
 
           <div class="form-group">
-            <label for="portDestination">Port de destination *</label>
-            <input id="portDestination" formControlName="portDestination" type="text" />
-            <div class="error-message" *ngIf="adForm.get('portDestination')?.invalid && adForm.get('portDestination')?.touched">
+            <label for="portDestinationSearch">Port de destination *</label>
+            <div class="autocomplete-container">
+              <input
+                id="portDestinationSearch"
+                type="text"
+                formControlName="portDestinationSearch"
+                placeholder="Rechercher un port de destination"
+                (focus)="showPortDestinationDropdown = true"
+              />
+              <div class="autocomplete-dropdown" *ngIf="showPortDestinationDropdown">
+                <div
+                  class="autocomplete-item"
+                  *ngFor="let port of filteredPorts"
+                  (click)="selectPortDestination(port)"
+                >
+                  {{ port.nomPort }}
+                </div>
+                <div class="autocomplete-item no-results" *ngIf="filteredPorts.length === 0">
+                  Aucun résultat
+                </div>
+              </div>
+            </div>
+            <div class="error-message" *ngIf="adForm.get('portDestinationSearch')?.invalid && adForm.get('portDestinationSearch')?.touched">
               Le port de destination est requis
             </div>
           </div>

@@ -5,98 +5,127 @@
   </div>
 
   <div class="search-container">
-    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <div class="search-toggle">
+      <button (click)="toggleAdvancedSearch()" class="toggle-button">
+        {{ showAdvancedSearch ? 'Recherche simple' : 'Recherche avancée' }}
+      </button>
+    </div>
+
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="responsive-form">
+      <!-- Basic Search Fields - Always Visible -->
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group col-md-6 col-sm-12">
           <label for="numeroVisite">Numéro de visite</label>
-          <input id="numeroVisite" formControlName="numeroVisite" type="text" />
+          <input id="numeroVisite" formControlName="numeroVisite" type="text" class="form-control" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group col-md-6 col-sm-12">
           <label for="numeroAD">Numéro AD</label>
-          <input id="numeroAD" formControlName="numeroAD" type="text" />
+          <input id="numeroAD" formControlName="numeroAD" type="text" class="form-control" />
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="eta">ETA</label>
-          <input id="eta" formControlName="eta" type="date" />
-        </div>
+      <!-- Advanced Search Fields - Toggleable -->
+      <div *ngIf="showAdvancedSearch" class="advanced-search-fields">
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="etaDebut">ETA Début</label>
+            <input id="etaDebut" formControlName="etaDebut" type="datetime-local" class="form-control" />
+          </div>
 
-        <div class="form-group">
-          <label for="etd">ETD</label>
-          <input id="etd" formControlName="etd" type="date" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Statut</label>
-        <div class="checkbox-group" formGroupName="statuts">
-          <div class="checkbox-item" *ngFor="let option of statusOptions">
-            <input
-              type="checkbox"
-              [id]="option.value"
-              [formControlName]="option.value"
-            />
-            <label [for]="option.value">{{ option.label }}</label>
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="etaFin">ETA Fin</label>
+            <input id="etaFin" formControlName="etaFin" type="datetime-local" class="form-control" />
           </div>
         </div>
-      </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="numeroDap">Numéro DAP</label>
-          <input id="numeroDap" formControlName="numeroDap" type="text" />
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="etdDebut">ETD Début</label>
+            <input id="etdDebut" formControlName="etdDebut" type="datetime-local" class="form-control" />
+          </div>
+
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="etdFin">ETD Fin</label>
+            <input id="etdFin" formControlName="etdFin" type="datetime-local" class="form-control" />
+          </div>
         </div>
-      </div>
 
-      <div class="form-row">
         <div class="form-group">
-          <label for="agentMaritimeSearch">Agent maritime</label>
-          <div class="autocomplete-container">
-            <input
-              id="agentMaritimeSearch"
-              type="text"
-              formControlName="agentMaritimeSearch"
-              placeholder="Rechercher un agent"
-              (focus)="showAgentDropdown = true"
-            />
-            <div class="autocomplete-dropdown" *ngIf="showAgentDropdown">
-              <div
-                class="autocomplete-item"
-                *ngFor="let agent of filteredAgents"
-                (click)="selectAgent(agent)"
-              >
-                {{ agent.compagnie }}
-              </div>
-              <div class="autocomplete-item no-results" *ngIf="filteredAgents.length === 0">
-                Aucun résultat
-              </div>
+          <label>Statut</label>
+          <div class="checkbox-group" formGroupName="statuts">
+            <div class="checkbox-item" *ngFor="let option of statusOptions">
+              <input
+                type="checkbox"
+                [id]="option.value"
+                [formControlName]="option.value"
+              />
+              <label [for]="option.value">{{ option.label }}</label>
             </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="navireSearch">Navire</label>
-          <div class="autocomplete-container">
-            <input
-              id="navireSearch"
-              type="text"
-              formControlName="navireSearch"
-              placeholder="Rechercher un navire"
-              (focus)="showNavireDropdown = true"
-            />
-            <div class="autocomplete-dropdown" *ngIf="showNavireDropdown">
-              <div
-                class="autocomplete-item"
-                *ngFor="let navire of filteredNavires"
-                (click)="selectNavire(navire)"
-              >
-                {{ navire.nom }}
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="numeroDap">Numéro DAP</label>
+            <input id="numeroDap" formControlName="numeroDap" type="text" class="form-control" />
+          </div>
+
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="terminal">Terminal</label>
+            <input id="terminal" formControlName="terminal" type="text" class="form-control" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="agentMaritimeSearch">Agent maritime</label>
+            <div class="autocomplete-container">
+              <input
+                id="agentMaritimeSearch"
+                type="text"
+                formControlName="agentMaritimeSearch"
+                placeholder="Rechercher un agent"
+                (focus)="showAgentDropdown = true"
+                class="form-control"
+              />
+              <div class="autocomplete-dropdown" *ngIf="showAgentDropdown">
+                <div
+                  class="autocomplete-item"
+                  *ngFor="let agent of filteredAgents"
+                  (click)="selectAgent(agent)"
+                >
+                  {{ agent.compagnie }}
+                </div>
+                <div class="autocomplete-item no-results" *ngIf="filteredAgents.length === 0">
+                  Aucun résultat
+                </div>
               </div>
-              <div class="autocomplete-item no-results" *ngIf="filteredNavires.length === 0">
-                Aucun résultat
+            </div>
+          </div>
+
+          <div class="form-group col-md-6 col-sm-12">
+            <label for="navireSearch">Navire</label>
+            <div class="autocomplete-container">
+              <input
+                id="navireSearch"
+                type="text"
+                formControlName="navireSearch"
+                placeholder="Rechercher un navire"
+                (focus)="showNavireDropdown = true"
+                class="form-control"
+              />
+              <div class="autocomplete-dropdown" *ngIf="showNavireDropdown">
+                <div
+                  class="autocomplete-item"
+                  *ngFor="let navire of filteredNavires"
+                  (click)="selectNavire(navire)"
+                >
+                  {{ navire.nom }}
+                </div>
+                <div class="autocomplete-item no-results" *ngIf="filteredNavires.length === 0">
+                  Aucun résultat
+                </div>
               </div>
             </div>
           </div>
@@ -104,7 +133,8 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit">Rechercher</button>
+        <button type="submit" class="search-button">Rechercher</button>
+        <button type="button" (click)="resetForm()" class="reset-button">Réinitialiser</button>
       </div>
     </form>
   </div>
