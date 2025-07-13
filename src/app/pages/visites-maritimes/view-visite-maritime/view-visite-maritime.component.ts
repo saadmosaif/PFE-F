@@ -206,8 +206,23 @@ export class ViewVisiteMaritimeComponent implements OnInit {
         },
         error: (error) => {
           this.hideStatusChangeLoading();
-          this.errorMessage = 'Erreur lors de l\'activation de la visite maritime';
-          console.error(error);
+
+          // Extract error message from response if available
+          let errorMsg = 'Erreur lors de l\'activation de la visite maritime';
+
+          if (error.error && typeof error.error === 'string') {
+            // If the error response contains a string message
+            errorMsg += `: ${error.error}`;
+          } else if (error.message) {
+            // If there's a message property in the error object
+            errorMsg += `: ${error.message}`;
+          } else if (error.status === 0) {
+            // Network error
+            errorMsg += `: Impossible de se connecter au serveur`;
+          }
+
+          this.errorMessage = errorMsg;
+          console.error('Activation error:', error);
         }
       });
     }
@@ -266,8 +281,23 @@ export class ViewVisiteMaritimeComponent implements OnInit {
         },
         error: (error) => {
           this.hideStatusChangeLoading();
-          this.errorMessage = 'Erreur lors de la validation de la visite maritime';
-          console.error(error);
+
+          // Extract error message from response if available
+          let errorMsg = 'Erreur lors de la validation de la visite maritime';
+
+          if (error.error && typeof error.error === 'string') {
+            // If the error response contains a string message
+            errorMsg += `: ${error.error}`;
+          } else if (error.message) {
+            // If there's a message property in the error object
+            errorMsg += `: ${error.message}`;
+          } else if (error.status === 0) {
+            // Network error
+            errorMsg += `: Impossible de se connecter au serveur`;
+          }
+
+          this.errorMessage = errorMsg;
+          console.error('Validation error:', error);
         }
       });
     }
