@@ -223,6 +223,22 @@ input {
   margin-top: 1.5rem;
 }
 
+.status-workflow-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.status-workflow-section h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #444;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
 .status-actions {
   display: flex;
   gap: 1rem;
@@ -248,3 +264,4 @@ button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+

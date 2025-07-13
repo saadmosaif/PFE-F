@@ -1,0 +1,236 @@
+.status-workflow-container {
+  margin: 2rem 0;
+  font-family: Arial, sans-serif;
+}
+
+.status-workflow {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+/* Main workflow styles */
+.status-flow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.status-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.status-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 0.5rem;
+  width: 100px;
+  z-index: 2;
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.status-label {
+  font-weight: bold;
+  text-align: center;
+}
+
+.status-connector {
+  height: 4px;
+  background-color: #ddd;
+  flex-grow: 1;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  right: -50%;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+/* Special status (ANNULE) styles */
+.special-status {
+  position: absolute;
+  top: -60px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.annule-connector {
+  position: absolute;
+  border-top: 2px dashed #ddd;
+  width: 50px;
+  transform: rotate(-45deg);
+  transform-origin: bottom right;
+  transition: all 0.3s ease;
+}
+
+/* Status descriptions */
+.status-descriptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.status-description {
+  flex: 1;
+  min-width: 200px;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.status-description h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.status-description p {
+  margin-bottom: 1rem;
+}
+
+.possible-transitions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.possible-transitions h5 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.possible-transitions ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+/* Status-specific styles */
+.current {
+  border-color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+
+  .status-icon {
+    background-color: #007bff;
+    color: white;
+  }
+}
+
+.completed {
+  border-color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+
+  .status-icon {
+    background-color: #28a745;
+    color: white;
+  }
+
+  &.status-connector {
+    background-color: #28a745;
+  }
+}
+
+.possible {
+  border-color: #ffc107;
+  background-color: rgba(255, 193, 7, 0.1);
+  cursor: pointer;
+
+  .status-icon {
+    background-color: #ffc107;
+    color: #212529;
+  }
+
+  &:hover {
+    background-color: rgba(255, 193, 7, 0.2);
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+  }
+
+  &.annule-connector {
+    border-top-color: #ffc107;
+  }
+}
+
+.inactive {
+  border-color: #ddd;
+  background-color: #f8f9fa;
+  opacity: 0.7;
+
+  .status-icon {
+    background-color: #ddd;
+    color: #666;
+  }
+}
+
+/* ANNULE specific styles */
+.status-node.current.annule {
+  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+
+  .status-icon {
+    background-color: #dc3545;
+    color: white;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .status-flow {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 2rem;
+  }
+
+  .status-step {
+    flex-direction: row;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+
+  .status-connector {
+    height: 100%;
+    width: 4px;
+    top: 50%;
+    bottom: -50%;
+    left: 20px;
+    right: auto;
+  }
+
+  .special-status {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 1rem;
+    margin-left: 2rem;
+  }
+
+  .annule-connector {
+    display: none;
+  }
+}

@@ -209,4 +209,34 @@ export class VisiteMaritimeService {
     });
     return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/cloturer`, {}, { headers });
   }
+
+  validerVisiteMaritime(visiteMaritimeId: number): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/valider`, {}, { headers });
+  }
+
+  /**
+   * Changes the status of a maritime visit to any status without validation
+   * @param visiteMaritimeId The ID of the maritime visit
+   * @param newStatus The new status to set
+   * @param comment Optional comment explaining the reason for the status change
+   * @returns Observable of the updated maritime visit
+   */
+  changeStatus(visiteMaritimeId: number, newStatus: VisiteMaritimeStatus, comment?: string): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const requestBody = {
+      newStatus: newStatus,
+      comment: comment || ''
+    };
+
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/change-status`, requestBody, { headers });
+  }
 }

@@ -1,0 +1,58 @@
+<div class="status-workflow-container">
+  <div class="status-workflow">
+    <!-- Main workflow (linear path) -->
+    <div class="status-flow">
+      <div *ngFor="let status of statusFlow; let i = index" class="status-step">
+        <div [ngClass]="['status-node', getStatusClass(status.status)]">
+          <div class="status-icon">{{ i + 1 }}</div>
+          <div class="status-label">{{ status.label }}</div>
+        </div>
+
+        <!-- Connector line between nodes (except for the last one) -->
+        <div *ngIf="i < statusFlow.length - 1" class="status-connector"
+             [ngClass]="{'completed': isCompletedStatus(status.status)}">
+        </div>
+      </div>
+    </div>
+
+    <!-- Special status: ANNULE (shown separately) -->
+    <div class="special-status">
+      <div class="status-node" [ngClass]="[getStatusClass('ANNULE'), 'annule']">
+        <div class="status-icon">X</div>
+        <div class="status-label">Annulé</div>
+      </div>
+
+      <!-- Dashed connectors to ANNULE from each status -->
+      <div *ngFor="let status of statusFlow; let i = index"
+           class="annule-connector"
+           [ngClass]="{'possible': isPossibleNextStatus('ANNULE') && isCurrentStatus(status.status)}">
+      </div>
+    </div>
+  </div>
+
+  <!-- Status descriptions -->
+  <div class="status-descriptions">
+    <div *ngFor="let status of statusFlow" class="status-description" [ngClass]="getStatusClass(status.status)">
+      <h4>{{ status.label }}</h4>
+      <p>{{ status.description }}</p>
+
+      <!-- Show possible transitions from current status -->
+      <div *ngIf="isCurrentStatus(status.status)" class="possible-transitions">
+        <h5>Actions possibles:</h5>
+        <ul>
+          <li *ngFor="let transition of statusTransitions">
+            <span *ngIf="transition.from === status.status">
+              {{ transition.label }} → {{ getStatusLabel(transition.to) }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ANNULE status description -->
+    <div class="status-description" [ngClass]="getStatusClass('ANNULE')" *ngIf="currentStatus === 'ANNULE'">
+      <h4>Annulé</h4>
+      <p>Cette visite maritime a été annulée.</p>
+    </div>
+  </div>
+</div>
