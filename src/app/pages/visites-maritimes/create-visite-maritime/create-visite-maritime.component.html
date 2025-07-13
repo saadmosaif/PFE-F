@@ -1,0 +1,140 @@
+<div class="container">
+  <div class="back-button">
+    <button (click)="goBack()" class="secondary-button">← Retour</button>
+  </div>
+
+  <h2>Créer une Visite Maritime</h2>
+
+  <div class="form-container">
+    <form [formGroup]="visiteMaritimeForm" (ngSubmit)="onSubmit()">
+      <div class="section-title">Informations de la Visite Maritime</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="numeroVisite">Numéro de visite *</label>
+          <input id="numeroVisite" formControlName="numeroVisite" type="text" />
+          <div class="error-message" *ngIf="visiteMaritimeForm.get('numeroVisite')?.invalid && visiteMaritimeForm.get('numeroVisite')?.touched">
+            Le numéro de visite est requis
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="terminal">Terminal</label>
+          <input id="terminal" formControlName="terminal" type="text" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="navireSearch">Navire *</label>
+          <div class="autocomplete-container">
+            <input
+              id="navireSearch"
+              type="text"
+              formControlName="navireSearch"
+              placeholder="Rechercher un navire"
+              (focus)="showNavireDropdown = true"
+            />
+            <div class="autocomplete-dropdown" *ngIf="showNavireDropdown">
+              <div
+                class="autocomplete-item"
+                *ngFor="let navire of filteredNavires"
+                (click)="selectNavire(navire)"
+              >
+                {{ navire.nom }}
+              </div>
+              <div class="autocomplete-item no-results" *ngIf="filteredNavires.length === 0">
+                Aucun résultat
+              </div>
+            </div>
+          </div>
+          <div class="error-message" *ngIf="visiteMaritimeForm.get('navireSearch')?.invalid && visiteMaritimeForm.get('navireSearch')?.touched">
+            Le navire est requis
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="agentMaritimeSearch">Agent maritime *</label>
+          <div class="autocomplete-container">
+            <input
+              id="agentMaritimeSearch"
+              type="text"
+              formControlName="agentMaritimeSearch"
+              placeholder="Rechercher un agent"
+              (focus)="showAgentDropdown = true"
+            />
+            <div class="autocomplete-dropdown" *ngIf="showAgentDropdown">
+              <div
+                class="autocomplete-item"
+                *ngFor="let agent of filteredAgents"
+                (click)="selectAgent(agent)"
+              >
+                {{ agent.compagnie }}
+              </div>
+              <div class="autocomplete-item no-results" *ngIf="filteredAgents.length === 0">
+                Aucun résultat
+              </div>
+            </div>
+          </div>
+          <div class="error-message" *ngIf="visiteMaritimeForm.get('agentMaritimeSearch')?.invalid && visiteMaritimeForm.get('agentMaritimeSearch')?.touched">
+            L'agent maritime est requis
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Déclaration d'Arrivée (AD)</div>
+
+      <div [formGroup]="adForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="numeroAD">Numéro AD *</label>
+            <input id="numeroAD" formControlName="numeroAD" type="text" />
+            <div class="error-message" *ngIf="adForm.get('numeroAD')?.invalid && adForm.get('numeroAD')?.touched">
+              Le numéro AD est requis
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dateETA">Date ETA *</label>
+            <input id="dateETA" formControlName="dateETA" type="date" />
+            <div class="error-message" *ngIf="adForm.get('dateETA')?.invalid && adForm.get('dateETA')?.touched">
+              La date ETA est requise
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="portProvenance">Port de provenance *</label>
+            <input id="portProvenance" formControlName="portProvenance" type="text" />
+            <div class="error-message" *ngIf="adForm.get('portProvenance')?.invalid && adForm.get('portProvenance')?.touched">
+              Le port de provenance est requis
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="portDestination">Port de destination *</label>
+            <input id="portDestination" formControlName="portDestination" type="text" />
+            <div class="error-message" *ngIf="adForm.get('portDestination')?.invalid && adForm.get('portDestination')?.touched">
+              Le port de destination est requis
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="primary-button" [disabled]="loading">
+          {{ loading ? 'Création en cours...' : 'Créer la visite maritime' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="success-message" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <div class="error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>

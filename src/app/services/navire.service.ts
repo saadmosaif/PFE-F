@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {AuthService} from "../core/auth/auth.service";
-import {Observable, throwError} from "rxjs";
-import {Port} from "./port.service";
-import Keycloak from "keycloak-js";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { AuthService } from "../core/auth/auth.service";
+import { Observable, throwError } from "rxjs";
 
 export interface Navire {
   id: number;
@@ -67,9 +65,13 @@ export class NavireService {
     return this.http.put(`${this.apiUrl}/${id}`, navireData, { headers });
   }
 
-
-
-
+  getNavireById(id: number): Observable<Navire> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<Navire>(`${this.apiUrl}/${id}`, { headers });
+  }
 
   deleteNavire(id: number): Observable<void> {
     const token = this.authService.getToken();

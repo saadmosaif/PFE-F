@@ -1,5 +1,8 @@
 <div class="container">
-  <h2>Consulter les Visites Maritimes</h2>
+  <div class="header-container">
+    <h2>Consulter les Visites Maritimes</h2>
+    <button class="create-button" routerLink="/visites-maritimes/create">+ Créer une visite maritime</button>
+  </div>
 
   <div class="search-container">
     <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
@@ -119,7 +122,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let visite of visitesMaritimes" (click)="viewEscale(visite.id)">
+        <tr *ngFor="let visite of visitesMaritimes" (click)="viewVisiteMaritime(visite.id)">
           <td>{{ visite.numeroVisite }}</td>
           <td>{{ getAgentMaritimeCompagnie(visite.agentMaritime) }}</td>
           <td>{{ getNavireNom(visite.navire) }}</td>
@@ -148,7 +151,7 @@
   </div>
 
   <!-- All Maritime Visits Section -->
-  <div class="all-escales-container">
+  <div class="all-visites-maritimes-container">
     <h3>Toutes les Visites Maritimes</h3>
     <div *ngIf="loading" class="loading-indicator">
       Chargement des visites maritimes...
@@ -169,7 +172,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let visite of allVisitesMaritimes" (click)="viewEscale(visite.id)">
+        <tr *ngFor="let visite of allVisitesMaritimes" (click)="viewVisiteMaritime(visite.id)">
           <td>{{ visite.numeroVisite }}</td>
           <td>{{ getAgentMaritimeCompagnie(visite.agentMaritime) }}</td>
           <td>{{ getNavireNom(visite.navire) }}</td>

@@ -5,7 +5,7 @@ import { Observable, throwError } from "rxjs";
 import { Navire } from "./navire.service";
 import { Client } from "./navire.service";
 
-export enum EscaleStatus {
+export enum VisiteMaritimeStatus {
   PREVU = 'PREVU',
   VALIDE = 'VALIDE',
   ACTIVE = 'ACTIVE',
@@ -13,12 +13,12 @@ export enum EscaleStatus {
   ANNULE = 'ANNULE'
 }
 
-export interface EscaleSearchCriteria {
+export interface VisiteMaritimeSearchCriteria {
   numeroVisite?: string;
   numeroAD?: string;
   eta?: string;
   etd?: string;
-  statuts?: EscaleStatus[];
+  statuts?: VisiteMaritimeStatus[];
   numeroDap?: string;
   agentMaritimeId?: number;
   navireId?: number;
@@ -40,15 +40,15 @@ export interface DAP {
   portDestination: string;
 }
 
-export interface Escale {
+export interface VisiteMaritime {
   id: number;
   numeroVisite: string;
   numeroAD?: string;
   terminal?: string;
   navire: string | Navire;
   agentMaritime: string | Client;
-  status?: EscaleStatus;
-  statut?: EscaleStatus;
+  status?: VisiteMaritimeStatus;
+  statut?: VisiteMaritimeStatus;
   eta?: string;
   etd?: string;
   dateETA?: Date;
@@ -60,21 +60,21 @@ export interface Escale {
 @Injectable({
   providedIn: 'root'
 })
-export class EscaleService {
-  private apiUrl = 'http://localhost:8082/api/escales';
+export class VisiteMaritimeService {
+  private apiUrl = 'http://localhost:8082/api/visites-maritimes';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  createEscale(escaleData: any): Observable<any> {
+  createVisiteMaritime(visiteMaritimeData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.post(this.apiUrl, escaleData, { headers });
+    return this.http.post(this.apiUrl, visiteMaritimeData, { headers });
   }
 
-  getEscales(criteria?: EscaleSearchCriteria): Observable<Escale[]> {
+  getVisitesMaritimes(criteria?: VisiteMaritimeSearchCriteria): Observable<VisiteMaritime[]> {
     const token = this.authService.getToken();
 
     if (!token) {
@@ -83,47 +83,34 @@ export class EscaleService {
     }
 
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
 
-    let params = new HttpParams();
+    // Create a request object with the search criteria
+    const requestBody = criteria || {};
 
-    if (criteria) {
-      if (criteria.numeroVisite) params = params.set('numeroVisite', criteria.numeroVisite);
-      if (criteria.numeroAD) params = params.set('numeroAD', criteria.numeroAD);
-      if (criteria.eta) params = params.set('eta', criteria.eta);
-      if (criteria.etd) params = params.set('etd', criteria.etd);
-      if (criteria.numeroDap) params = params.set('numeroDap', criteria.numeroDap);
-      if (criteria.agentMaritimeId) params = params.set('agentMaritimeId', criteria.agentMaritimeId.toString());
-      if (criteria.navireId) params = params.set('navireId', criteria.navireId.toString());
-      if (criteria.statuts && criteria.statuts.length > 0) {
-        criteria.statuts.forEach(statut => {
-          params = params.append('statuts', statut);
-        });
-      }
-    }
-
-    return this.http.get<Escale[]>(`${this.apiUrl}`, { headers, params });
+    return this.http.post<VisiteMaritime[]>(`${this.apiUrl}/search`, requestBody, { headers });
   }
 
-  getEscaleById(id: number): Observable<Escale> {
+  getVisiteMaritimeById(id: number): Observable<VisiteMaritime> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.get<Escale>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.get<VisiteMaritime>(`${this.apiUrl}/${id}`, { headers });
   }
 
-  updateEscale(id: number, escaleData: any): Observable<any> {
+  updateVisiteMaritime(id: number, visiteMaritimeData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.put(`${this.apiUrl}/${id}`, escaleData, { headers });
+    return this.http.put(`${this.apiUrl}/${id}`, visiteMaritimeData, { headers });
   }
 
-  deleteEscale(id: number): Observable<void> {
+  deleteVisiteMaritime(id: number): Observable<void> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -132,81 +119,81 @@ export class EscaleService {
   }
 
   // AD operations
-  addAD(escaleId: number, adData: any): Observable<any> {
+  addAD(visiteMaritimeId: number, adData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.post(`${this.apiUrl}/${escaleId}/ad`, adData, { headers });
+    return this.http.post(`${this.apiUrl}/${visiteMaritimeId}/ad`, adData, { headers });
   }
 
-  updateAD(escaleId: number, adData: any): Observable<any> {
+  updateAD(visiteMaritimeId: number, adData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.put(`${this.apiUrl}/${escaleId}/ad`, adData, { headers });
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/ad`, adData, { headers });
   }
 
-  deleteAD(escaleId: number): Observable<void> {
+  deleteAD(visiteMaritimeId: number): Observable<void> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.delete<void>(`${this.apiUrl}/${escaleId}/ad`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${visiteMaritimeId}/ad`, { headers });
   }
 
   // DAP operations
-  addDAP(escaleId: number, dapData: any): Observable<any> {
+  addDAP(visiteMaritimeId: number, dapData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.post(`${this.apiUrl}/${escaleId}/dap`, dapData, { headers });
+    return this.http.post(`${this.apiUrl}/${visiteMaritimeId}/dap`, dapData, { headers });
   }
 
-  updateDAP(escaleId: number, dapData: any): Observable<any> {
+  updateDAP(visiteMaritimeId: number, dapData: any): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.put(`${this.apiUrl}/${escaleId}/dap`, dapData, { headers });
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/dap`, dapData, { headers });
   }
 
-  deleteDAP(escaleId: number): Observable<void> {
+  deleteDAP(visiteMaritimeId: number): Observable<void> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.delete<void>(`${this.apiUrl}/${escaleId}/dap`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${visiteMaritimeId}/dap`, { headers });
   }
 
   // Status operations
-  annulerEscale(escaleId: number): Observable<any> {
+  annulerVisiteMaritime(visiteMaritimeId: number): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.put(`${this.apiUrl}/${escaleId}/annuler`, {}, { headers });
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/annuler`, {}, { headers });
   }
 
-  activerEscale(escaleId: number): Observable<any> {
+  activerVisiteMaritime(visiteMaritimeId: number): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.put(`${this.apiUrl}/${escaleId}/activer`, {}, { headers });
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/activer`, {}, { headers });
   }
 
-  cloturerEscale(escaleId: number): Observable<any> {
+  cloturerVisiteMaritime(visiteMaritimeId: number): Observable<any> {
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
-    return this.http.put(`${this.apiUrl}/${escaleId}/cloturer`, {}, { headers });
+    return this.http.put(`${this.apiUrl}/${visiteMaritimeId}/cloturer`, {}, { headers });
   }
 }

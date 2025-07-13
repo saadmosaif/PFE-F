@@ -17,6 +17,10 @@ import { CreateEscaleComponent } from './pages/escales/create-escale/create-esca
 import { ListEscalesComponent } from './pages/escales/list-escales/list-escales.component';
 import { ViewEscaleComponent } from './pages/escales/view-escale/view-escale.component';
 
+import { CreateVisiteMaritimeComponent } from './pages/visites-maritimes/create-visite-maritime/create-visite-maritime.component';
+import { ListVisiteMaritimeComponent } from './pages/visites-maritimes/list-visite-maritime/list-visite-maritime.component';
+import { ViewVisiteMaritimeComponent } from './pages/visites-maritimes/view-visite-maritime/view-visite-maritime.component';
+
 import { ListDeclarationsComponent } from './pages/declarations/list-declarations/list-declarations.component';
 import { ViewDeclarationComponent } from './pages/declarations/view-declaration/view-declaration.component';
 
@@ -71,7 +75,7 @@ export const routes: Routes = [
     component: ListShipsComponent,
     canActivate: [authGuard]
   },
-  // Visites maritimes
+  // Visites maritimes (legacy routes)
   {
     path: 'escales/create',
     component: CreateEscaleComponent,
@@ -85,6 +89,22 @@ export const routes: Routes = [
   {
     path: 'escales/:id',
     component: ViewEscaleComponent,
+    canActivate: [authGuard]
+  },
+  // Visites maritimes (new routes)
+  {
+    path: 'visites-maritimes/create',
+    component: CreateVisiteMaritimeComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'visites-maritimes',
+    component: ListVisiteMaritimeComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'visites-maritimes/:id',
+    component: ViewVisiteMaritimeComponent,
     canActivate: [authGuard]
   },
   // Déclarations de marchandises

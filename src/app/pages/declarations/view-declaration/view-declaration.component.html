@@ -1,41 +1,41 @@
-<div class="container" *ngIf="!loading && escale">
+<div class="container" *ngIf="!loading && visiteMaritime">
   <div class="back-button">
     <button (click)="goBack()" class="secondary-button">← Retour</button>
   </div>
 
-  <!-- Escale information -->
-  <div class="escale-header">
-    <h2>Déclarations de Marchandises: {{ escale.numeroVisite }}</h2>
+  <!-- VisiteMaritime information -->
+  <div class="visite-maritime-header">
+    <h2>Déclarations de Marchandises: {{ visiteMaritime.numeroVisite }}</h2>
 
-    <div class="escale-info">
+    <div class="visite-maritime-info">
       <div class="info-group">
         <div class="info-item">
           <span class="label">Numéro de visite:</span>
-          <span class="value">{{ escale.numeroVisite }}</span>
+          <span class="value">{{ visiteMaritime.numeroVisite }}</span>
         </div>
         <div class="info-item">
           <span class="label">Numéro AD:</span>
-          <span class="value">{{ escale.numeroAD || 'Non défini' }}</span>
+          <span class="value">{{ visiteMaritime.numeroAD || 'Non défini' }}</span>
         </div>
         <div class="info-item">
           <span class="label">Terminal:</span>
-          <span class="value">{{ escale.terminal || 'Non défini' }}</span>
+          <span class="value">{{ visiteMaritime.terminal || 'Non défini' }}</span>
         </div>
       </div>
 
       <div class="info-group">
         <div class="info-item">
           <span class="label">Navire:</span>
-          <span class="value">{{ escale.navire?.nom || 'Non défini' }}</span>
+          <span class="value">{{ getNavireNom(visiteMaritime.navire) || 'Non défini' }}</span>
         </div>
         <div class="info-item">
           <span class="label">Agent maritime:</span>
-          <span class="value">{{ escale.agentMaritime?.compagnie || 'Non défini' }}</span>
+          <span class="value">{{ getAgentMaritimeCompagnie(visiteMaritime.agentMaritime) || 'Non défini' }}</span>
         </div>
         <div class="info-item">
           <span class="label">Statut:</span>
-          <span class="value status-badge" [ngClass]="escale.status?.toLowerCase() || ''">
-            {{ escale.status || 'Non défini' }}
+          <span class="value status-badge" [ngClass]="getStatusLowerCase(visiteMaritime.status)">
+            {{ visiteMaritime.status || 'Non défini' }}
           </span>
         </div>
       </div>
@@ -139,7 +139,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let conteneur of conteneurs">
-              <td>{{ conteneur.connaissement.numeroConnaissement }}</td>
+              <td>{{ conteneur.connaissement?.numeroConnaissement }}</td>
               <td>{{ conteneur.numeroConteneur }}</td>
               <td>{{ conteneur.codeISO }}</td>
               <td>{{ conteneur.typeConteneur }}</td>
@@ -177,7 +177,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let roro of roros">
-              <td>{{ roro.connaissement.numeroConnaissement }}</td>
+              <td>{{ roro.connaissement?.numeroConnaissement }}</td>
               <td>{{ roro.numeroIdentification }}</td>
               <td>{{ roro.marque }}</td>
               <td>{{ roro.modele }}</td>
@@ -214,7 +214,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of divers">
-              <td>{{ item.connaissement.numeroConnaissement }}</td>
+              <td>{{ item.connaissement?.numeroConnaissement }}</td>
               <td>{{ item.description }}</td>
               <td>{{ item.quantite }}</td>
               <td>{{ item.poids }} kg</td>

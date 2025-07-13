@@ -9,7 +9,7 @@ import { AuthService } from '../../core/auth/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrl:'./login.component.scss',
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   username = '';
@@ -24,7 +24,7 @@ export class LoginComponent {
         this.router.navigate(['/dashboard']);
       },
       error: () => {
-        this.error = 'Nom d’utilisateur ou mot de passe incorrect.';
+        this.error = 'Nom d\'utilisateur ou mot de passe incorrect.';
       },
     });
   }

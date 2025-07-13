@@ -1,40 +1,40 @@
-<div class="container" *ngIf="!loading && escale">
+<div class="container" *ngIf="!loading && visiteMaritime">
   <div class="back-button">
     <button (click)="goBack()" class="secondary-button">← Retour</button>
   </div>
 
-  <div class="escale-header">
-    <h2>Visite Maritime: {{ escale.numeroVisite }}</h2>
+  <div class="visite-maritime-header">
+    <h2>Visite Maritime: {{ visiteMaritime.numeroVisite }}</h2>
 
-    <div class="escale-info">
+    <div class="visite-maritime-info">
       <div class="info-group">
         <div class="info-item">
           <span class="label">Numéro de visite:</span>
-          <span class="value">{{ escale.numeroVisite }}</span>
+          <span class="value">{{ visiteMaritime.numeroVisite }}</span>
         </div>
         <div class="info-item">
           <span class="label">Numéro AD:</span>
-          <span class="value">{{ escale.numeroAD || 'Non défini' }}</span>
+          <span class="value">{{ visiteMaritime.numeroAD || 'Non défini' }}</span>
         </div>
         <div class="info-item">
           <span class="label">Terminal:</span>
-          <span class="value">{{ escale.terminal || 'Non défini' }}</span>
+          <span class="value">{{ visiteMaritime.terminal || 'Non défini' }}</span>
         </div>
       </div>
 
       <div class="info-group">
         <div class="info-item">
           <span class="label">Navire:</span>
-          <span class="value">{{ getNavireNom(escale.navire) }}</span>
+          <span class="value">{{ getNavireNom(visiteMaritime.navire) }}</span>
         </div>
         <div class="info-item">
           <span class="label">Agent maritime:</span>
-          <span class="value">{{ getAgentMaritimeCompagnie(escale.agentMaritime) }}</span>
+          <span class="value">{{ getAgentMaritimeCompagnie(visiteMaritime.agentMaritime) }}</span>
         </div>
         <div class="info-item">
           <span class="label">Statut:</span>
-          <span class="value status-badge" [ngClass]="getStatusLowerCase(escale.status)">
-            {{ escale.status }}
+          <span class="value status-badge" [ngClass]="getStatusLowerCase(visiteMaritime.status)">
+            {{ visiteMaritime.status }}
           </span>
         </div>
       </div>
@@ -53,7 +53,7 @@
       </button>
 
       <button
-        *ngIf="escale.status === 'VALIDE' || escale.status === 'ACTIVE' || escale.status === 'CLOTURE'"
+        *ngIf="visiteMaritime.status === 'VALIDE' || visiteMaritime.status === 'ACTIVE' || visiteMaritime.status === 'CLOTURE'"
         class="tab-button"
         [class.active]="activeTab === 'dap'"
         (click)="setActiveTab('dap')"
@@ -68,30 +68,30 @@
       <div *ngIf="activeTab === 'ad'" class="tab-pane">
         <h3>Déclaration d'Arrivée (AD)</h3>
 
-        <div *ngIf="escale.ad" class="ad-details">
+        <div *ngIf="visiteMaritime.ad" class="ad-details">
           <div class="info-item">
             <span class="label">Numéro AD:</span>
-            <span class="value">{{ escale.ad.numeroAD }}</span>
+            <span class="value">{{ visiteMaritime.ad.numeroAD }}</span>
           </div>
           <div class="info-item">
             <span class="label">Date ETA:</span>
-            <span class="value">{{ escale.ad.dateETA | date:'dd/MM/yyyy' }}</span>
+            <span class="value">{{ visiteMaritime.ad.dateETA | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-item">
             <span class="label">Port de provenance:</span>
-            <span class="value">{{ escale.ad.portProvenance }}</span>
+            <span class="value">{{ visiteMaritime.ad.portProvenance }}</span>
           </div>
           <div class="info-item">
             <span class="label">Port de destination:</span>
-            <span class="value">{{ escale.ad.portDestination }}</span>
+            <span class="value">{{ visiteMaritime.ad.portDestination }}</span>
           </div>
 
-          <div class="actions" *ngIf="escale.status === 'PREVU'">
+          <div class="actions" *ngIf="visiteMaritime.status === 'PREVU'">
             <button class="danger-button" (click)="deleteAD()">Supprimer AD</button>
           </div>
         </div>
 
-        <div *ngIf="!escale.ad" class="no-data">
+        <div *ngIf="!visiteMaritime.ad" class="no-data">
           Aucune déclaration d'arrivée disponible.
         </div>
       </div>
@@ -100,31 +100,31 @@
       <div *ngIf="activeTab === 'dap'" class="tab-pane">
         <h3>Déclaration d'Arrivée Portuaire (DAP)</h3>
 
-        <div *ngIf="escale.dap" class="dap-details">
+        <div *ngIf="visiteMaritime.dap" class="dap-details">
           <div class="info-item">
             <span class="label">Numéro DAP:</span>
-            <span class="value">{{ escale.dap.numeroDap }}</span>
+            <span class="value">{{ visiteMaritime.dap.numeroDap }}</span>
           </div>
           <div class="info-item">
             <span class="label">Date ETA:</span>
-            <span class="value">{{ escale.dap.dateETA | date:'dd/MM/yyyy' }}</span>
+            <span class="value">{{ visiteMaritime.dap.dateETA | date:'dd/MM/yyyy' }}</span>
           </div>
           <div class="info-item">
             <span class="label">Port de provenance:</span>
-            <span class="value">{{ escale.dap.portProvenance }}</span>
+            <span class="value">{{ visiteMaritime.dap.portProvenance }}</span>
           </div>
           <div class="info-item">
             <span class="label">Port de destination:</span>
-            <span class="value">{{ escale.dap.portDestination }}</span>
+            <span class="value">{{ visiteMaritime.dap.portDestination }}</span>
           </div>
 
-          <div class="actions" *ngIf="escale.status === 'VALIDE'">
+          <div class="actions" *ngIf="visiteMaritime.status === 'VALIDE'">
             <button class="primary-button" (click)="updateDAP()">Modifier DAP</button>
             <button class="danger-button" (click)="deleteDAP()">Supprimer DAP</button>
           </div>
         </div>
 
-        <div *ngIf="!escale.dap && escale.status === 'PREVU'" class="dap-form">
+        <div *ngIf="!visiteMaritime.dap && visiteMaritime.status === 'PREVU'" class="dap-form">
           <h4>Ajouter un DAP</h4>
           <form [formGroup]="dapForm" (ngSubmit)="submitDAP()">
             <div class="form-group">
@@ -153,7 +153,7 @@
           </form>
         </div>
 
-        <div *ngIf="!escale.dap && escale.status !== 'PREVU'" class="no-data">
+        <div *ngIf="!visiteMaritime.dap && visiteMaritime.status !== 'PREVU'" class="no-data">
           Aucune déclaration d'arrivée portuaire disponible.
         </div>
       </div>
@@ -161,10 +161,10 @@
   </div>
 
   <!-- Status action buttons -->
-  <div class="status-actions" *ngIf="escale.status !== 'ANNULE' && escale.status !== 'CLOTURE'">
-    <button *ngIf="escale.status === 'PREVU'" class="danger-button" (click)="annulerEscale()">Annuler la visite</button>
-    <button *ngIf="escale.status === 'VALIDE'" class="primary-button" (click)="activerEscale()">Activer</button>
-    <button *ngIf="escale.status === 'ACTIVE' || escale.status === 'VALIDE'" class="secondary-button" (click)="cloturerEscale()">Clôturer</button>
+  <div class="status-actions" *ngIf="visiteMaritime.status !== 'ANNULE' && visiteMaritime.status !== 'CLOTURE'">
+    <button *ngIf="visiteMaritime.status === 'PREVU'" class="danger-button" (click)="annulerVisiteMaritime()">Annuler la visite</button>
+    <button *ngIf="visiteMaritime.status === 'VALIDE'" class="primary-button" (click)="activerVisiteMaritime()">Activer</button>
+    <button *ngIf="visiteMaritime.status === 'ACTIVE' || visiteMaritime.status === 'VALIDE'" class="secondary-button" (click)="cloturerVisiteMaritime()">Clôturer</button>
   </div>
 </div>
 

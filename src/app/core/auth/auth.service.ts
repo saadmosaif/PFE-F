@@ -35,10 +35,21 @@ export class AuthService {
   getUserInfo(): any {
     const token = this.getToken();
     if (!token) return null;
-  
-    const payload = token.split('.')[1];
-    const decoded = atob(payload);
-    return JSON.parse(decoded);
+
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        console.error('Invalid token format');
+        return null;
+      }
+
+      const payload = parts[1];
+      const decoded = atob(payload);
+      return JSON.parse(decoded);
+    } catch (error) {
+      console.error('Error parsing token:', error);
+      return null;
+    }
   }
-  
+
 }

@@ -4,10 +4,32 @@
   padding: 2rem;
 }
 
-h2 {
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
+}
+
+h2 {
+  margin: 0;
   color: #333;
-  text-align: center;
+}
+
+.create-button {
+  padding: 0.6rem 1.2rem;
+  background-color: #28a745;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.create-button:hover {
+  background-color: #218838;
 }
 
 .search-container {
@@ -207,13 +229,13 @@ tbody tr:hover {
 }
 
 // All Maritime Visits section
-.all-escales-container {
+.all-visites-maritimes-container {
   margin-top: 3rem;
   padding-top: 2rem;
   border-top: 2px solid #007bff;
 }
 
-.all-escales-container h3 {
+.all-visites-maritimes-container h3 {
   color: #007bff;
   margin-bottom: 1.5rem;
   text-align: center;

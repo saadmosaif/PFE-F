@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DeclarationService, Connaissement, DeclarationSearchCriteria, SensTrafic, TypeContenant } from '../../../services/declaration.service';
-import { EscaleService } from '../../../services/escale.service';
+import { VisiteMaritimeService } from '../../../services/visite-maritime.service';
 import { NavireService, Client } from '../../../services/navire.service';
 
 @Component({
@@ -38,7 +38,7 @@ export class ListDeclarationsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private declarationService: DeclarationService,
-    private escaleService: EscaleService,
+    private visiteMaritimeService: VisiteMaritimeService,
     private navireService: NavireService,
     private router: Router
   ) {
@@ -105,7 +105,7 @@ export class ListDeclarationsComponent implements OnInit {
 
     const criteria: DeclarationSearchCriteria = {
       numeroConnaissement: this.searchForm.get('numeroConnaissement')?.value || undefined,
-      escaleId: this.searchForm.get('escaleId')?.value || undefined,
+      visiteMaritimeId: this.searchForm.get('escaleId')?.value || undefined,
       agentMaritimeId: this.searchForm.get('agentMaritimeId')?.value || undefined,
       sensTrafic: this.searchForm.get('sensTrafic')?.value || undefined,
       typeContenant: this.searchForm.get('typeContenant')?.value || undefined
@@ -124,7 +124,7 @@ export class ListDeclarationsComponent implements OnInit {
     });
   }
 
-  viewConnaissement(escaleId: number): void {
-    this.router.navigate(['/declarations', escaleId]);
+  viewConnaissement(visiteMaritimeId: number): void {
+    this.router.navigate(['/declarations', visiteMaritimeId]);
   }
 }

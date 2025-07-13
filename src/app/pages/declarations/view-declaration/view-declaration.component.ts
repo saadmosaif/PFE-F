@@ -3,17 +3,18 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DeclarationService, Connaissement, Conteneur, RORO, Divers, TypeContenant, SensTrafic, TypeConteneur } from '../../../services/declaration.service';
-import { EscaleService, Escale } from '../../../services/escale.service';
+import { VisiteMaritimeService, VisiteMaritime, VisiteMaritimeStatus } from '../../../services/visite-maritime.service';
+import { Navire, Client } from '../../../services/navire.service';
 
 @Component({
   selector: 'app-view-declaration',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './view-declaration.component.html',
-  styleUrls: ['./view-declaration.component.scss']
+  styleUrl: './view-declaration.component.scss'
 })
 export class ViewDeclarationComponent implements OnInit {
-  escale: Escale | null = null;
+  visiteMaritime: VisiteMaritime | null = null;
   connaissements: Connaissement[] = [];
   conteneurs: Conteneur[] = [];
   roros: RORO[] = [];
@@ -58,7 +59,7 @@ export class ViewDeclarationComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private declarationService: DeclarationService,
-    private escaleService: EscaleService,
+    private visiteMaritimeService: VisiteMaritimeService,
     private fb: FormBuilder
   ) {
     this.connaissementForm = this.fb.group({
@@ -99,17 +100,17 @@ export class ViewDeclarationComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadEscale(+id);
+      this.loadVisiteMaritime(+id);
     } else {
       this.errorMessage = 'ID de visite maritime non trouvé';
       this.loading = false;
     }
   }
 
-  loadEscale(id: number): void {
-    this.escaleService.getEscaleById(id).subscribe({
+  loadVisiteMaritime(id: number): void {
+    this.visiteMaritimeService.getVisiteMaritimeById(id).subscribe({
       next: (data) => {
-        this.escale = data;
+        this.visiteMaritime = data;
         this.loadConnaissements(id);
       },
       error: (error) => {
@@ -120,8 +121,8 @@ export class ViewDeclarationComponent implements OnInit {
     });
   }
 
-  loadConnaissements(escaleId: number): void {
-    const criteria = { escaleId };
+  loadConnaissements(visiteMaritimeId: number): void {
+    const criteria = { visiteMaritimeId };
     this.declarationService.getConnaissements(criteria).subscribe({
       next: (data) => {
         this.connaissements = data;
@@ -138,10 +139,43 @@ export class ViewDeclarationComponent implements OnInit {
   loadConteneurs(connaissementId: number): void {
     this.declarationService.getConteneurs(connaissementId).subscribe({
       next: (data) => {
-        this.conteneurs = data;
+        try {
+          // Filter out items with undefined connaissement or provide a default value
+          this.conteneurs = (data || []).filter(item => item && item.connaissement);
+
+          // Add a default connaissement object if needed
+          this.conteneurs.forEach(conteneur => {
+            if (!conteneur.connaissement) {
+              conteneur.connaissement = {
+                id: 0,
+                numeroConnaissement: 'N/A',
+                agentMaritime: '',
+                sensTrafic: SensTrafic.IMPORT,
+                portProvenance: '',
+                portDestination: '',
+                typeContenant: TypeContenant.CONTENEUR,
+                nombreUnites: 0,
+                volume: 0,
+                visiteMaritimeId: 0,
+                numeroVisite: ''
+              };
+            }
+          });
+        } catch (err) {
+          console.error('Erreur lors du traitement des données Conteneur', err);
+          this.conteneurs = [];
+        }
       },
       error: (error) => {
         console.error('Erreur lors du chargement des conteneurs', error);
+        // Initialize to empty array to prevent UI issues
+        this.conteneurs = [];
+      },
+      complete: () => {
+        // Ensure we have a valid array even if something went wrong
+        if (!this.conteneurs) {
+          this.conteneurs = [];
+        }
       }
     });
   }
@@ -149,10 +183,43 @@ export class ViewDeclarationComponent implements OnInit {
   loadRoros(connaissementId: number): void {
     this.declarationService.getROROs(connaissementId).subscribe({
       next: (data) => {
-        this.roros = data;
+        try {
+          // Filter out items with undefined connaissement or provide a default value
+          this.roros = (data || []).filter(item => item && item.connaissement);
+
+          // Add a default connaissement object if needed
+          this.roros.forEach(roro => {
+            if (!roro.connaissement) {
+              roro.connaissement = {
+                id: 0,
+                numeroConnaissement: 'N/A',
+                agentMaritime: '',
+                sensTrafic: SensTrafic.IMPORT,
+                portProvenance: '',
+                portDestination: '',
+                typeContenant: TypeContenant.RORO,
+                nombreUnites: 0,
+                volume: 0,
+                visiteMaritimeId: 0,
+                numeroVisite: ''
+              };
+            }
+          });
+        } catch (err) {
+          console.error('Erreur lors du traitement des données RORO', err);
+          this.roros = [];
+        }
       },
       error: (error) => {
         console.error('Erreur lors du chargement des ROROs', error);
+        // Initialize to empty array to prevent UI issues
+        this.roros = [];
+      },
+      complete: () => {
+        // Ensure we have a valid array even if something went wrong
+        if (!this.roros) {
+          this.roros = [];
+        }
       }
     });
   }
@@ -160,10 +227,43 @@ export class ViewDeclarationComponent implements OnInit {
   loadDivers(connaissementId: number): void {
     this.declarationService.getDivers(connaissementId).subscribe({
       next: (data) => {
-        this.divers = data;
+        try {
+          // Filter out items with undefined connaissement or provide a default value
+          this.divers = (data || []).filter(item => item && item.connaissement);
+
+          // Add a default connaissement object if needed
+          this.divers.forEach(item => {
+            if (!item.connaissement) {
+              item.connaissement = {
+                id: 0,
+                numeroConnaissement: 'N/A',
+                agentMaritime: '',
+                sensTrafic: SensTrafic.IMPORT,
+                portProvenance: '',
+                portDestination: '',
+                typeContenant: TypeContenant.DIVERS,
+                nombreUnites: 0,
+                volume: 0,
+                visiteMaritimeId: 0,
+                numeroVisite: ''
+              };
+            }
+          });
+        } catch (err) {
+          console.error('Erreur lors du traitement des données Divers', err);
+          this.divers = [];
+        }
       },
       error: (error) => {
         console.error('Erreur lors du chargement des divers', error);
+        // Initialize to empty array to prevent UI issues
+        this.divers = [];
+      },
+      complete: () => {
+        // Ensure we have a valid array even if something went wrong
+        if (!this.divers) {
+          this.divers = [];
+        }
       }
     });
   }
@@ -201,11 +301,11 @@ export class ViewDeclarationComponent implements OnInit {
   }
 
   submitConnaissement(): void {
-    if (this.connaissementForm.invalid || !this.escale) return;
+    if (this.connaissementForm.invalid || !this.visiteMaritime) return;
 
     const connaissementData = {
       ...this.connaissementForm.value,
-      escaleId: this.escale.id
+      visiteMaritimeId: this.visiteMaritime.id
     };
 
     this.declarationService.createConnaissement(connaissementData).subscribe({
@@ -349,5 +449,24 @@ export class ViewDeclarationComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/declarations']);
+  }
+
+  // Helper methods for type checking
+  getNavireNom(navire: string | Navire): string {
+    if (navire && typeof navire === 'object' && 'nom' in navire) {
+      return navire.nom;
+    }
+    return navire as string;
+  }
+
+  getAgentMaritimeCompagnie(agentMaritime: string | Client): string {
+    if (agentMaritime && typeof agentMaritime === 'object' && 'compagnie' in agentMaritime) {
+      return agentMaritime.compagnie;
+    }
+    return agentMaritime as string;
+  }
+
+  getStatusLowerCase(status: VisiteMaritimeStatus | undefined): string {
+    return status ? status.toLowerCase() : '';
   }
 }

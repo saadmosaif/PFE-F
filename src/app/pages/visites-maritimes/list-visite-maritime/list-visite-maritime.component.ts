@@ -1,28 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { EscaleService, Escale, EscaleStatus, EscaleSearchCriteria } from '../../../services/escale.service';
+import { Router, RouterModule } from '@angular/router';
 import { VisiteMaritimeService, VisiteMaritime, VisiteMaritimeStatus, VisiteMaritimeSearchCriteria } from '../../../services/visite-maritime.service';
 import { NavireService, Navire } from '../../../services/navire.service';
 import { Client } from '../../../services/navire.service';
 
 @Component({
-  selector: 'app-list-escales',
+  selector: 'app-list-visite-maritime',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './list-escales.component.html',
-  styleUrl: './list-escales.component.scss',
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  templateUrl: './list-visite-maritime.component.html',
+  styleUrl: './list-visite-maritime.component.scss',
 })
-export class ListEscalesComponent implements OnInit {
+export class ListVisiteMaritimeComponent implements OnInit {
   searchForm: FormGroup;
-  escales: Escale[] = [];
-  allEscales: Escale[] = []; // All maritime visits
   visitesMaritimes: VisiteMaritime[] = [];
   allVisitesMaritimes: VisiteMaritime[] = []; // All maritime visits
   navires: Navire[] = [];
   agents: Client[] = [];
-  loading = false;
+  loading = true;
   errorMessage = '';
 
   // Autocompletion
@@ -42,7 +39,6 @@ export class ListEscalesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private escaleService: EscaleService,
     private visiteMaritimeService: VisiteMaritimeService,
     private navireService: NavireService,
     private router: Router
@@ -70,8 +66,8 @@ export class ListEscalesComponent implements OnInit {
   ngOnInit(): void {
     this.loadNavires();
     this.loadAgents();
-    this.searchEscales();
-    this.loadAllEscales(); // Load all maritime visits
+    this.searchVisitesMaritimes();
+    this.loadAllVisitesMaritimes(); // Load all maritime visits
 
     // Set up listeners for search fields
     this.searchForm.get('navireSearch')?.valueChanges.subscribe(value => {
@@ -84,7 +80,7 @@ export class ListEscalesComponent implements OnInit {
   }
 
   // Load all maritime visits without any filtering
-  loadAllEscales(): void {
+  loadAllVisitesMaritimes(): void {
     this.loading = true;
     this.errorMessage = '';
 
@@ -146,9 +142,6 @@ export class ListEscalesComponent implements OnInit {
 
           return visite;
         });
-
-        // For backward compatibility, also update the allEscales array
-        this.allEscales = this.allVisitesMaritimes as unknown as Escale[];
 
         console.log('Processed all maritime visits:', this.allVisitesMaritimes);
         this.loading = false;
@@ -228,10 +221,10 @@ export class ListEscalesComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.searchEscales();
+    this.searchVisitesMaritimes();
   }
 
-  searchEscales(): void {
+  searchVisitesMaritimes(): void {
     this.loading = true;
     this.errorMessage = '';
 
@@ -307,9 +300,6 @@ export class ListEscalesComponent implements OnInit {
           return visite;
         });
 
-        // For backward compatibility, also update the escales array
-        this.escales = this.visitesMaritimes as unknown as Escale[];
-
         this.loading = false;
       },
       error: (error) => {
@@ -320,11 +310,6 @@ export class ListEscalesComponent implements OnInit {
     });
   }
 
-  viewEscale(id: number): void {
-    this.router.navigate(['/escales', id]);
-  }
-
-  // Helper method to view a VisiteMaritime
   viewVisiteMaritime(id: number): void {
     this.router.navigate(['/visites-maritimes', id]);
   }

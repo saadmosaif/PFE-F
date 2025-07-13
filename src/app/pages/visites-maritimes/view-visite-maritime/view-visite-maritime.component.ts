@@ -2,19 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EscaleService, Escale, EscaleStatus, AD, DAP } from '../../../services/escale.service';
-import { VisiteMaritimeService, VisiteMaritime, VisiteMaritimeStatus } from '../../../services/visite-maritime.service';
+import { VisiteMaritimeService, VisiteMaritime, VisiteMaritimeStatus, AD, DAP } from '../../../services/visite-maritime.service';
 import { Navire, Client } from '../../../services/navire.service';
 
 @Component({
-  selector: 'app-view-escale',
+  selector: 'app-view-visite-maritime',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './view-escale.component.html',
-  styleUrl: './view-escale.component.scss'
+  templateUrl: './view-visite-maritime.component.html',
+  styleUrl: './view-visite-maritime.component.scss'
 })
-export class ViewEscaleComponent implements OnInit {
-  escale: Escale | null = null;
+export class ViewVisiteMaritimeComponent implements OnInit {
   visiteMaritime: VisiteMaritime | null = null;
   loading = true;
   errorMessage = '';
@@ -24,7 +22,6 @@ export class ViewEscaleComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private escaleService: EscaleService,
     private visiteMaritimeService: VisiteMaritimeService,
     private fb: FormBuilder
   ) {
@@ -39,19 +36,17 @@ export class ViewEscaleComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadEscale(+id);
+      this.loadVisiteMaritime(+id);
     } else {
       this.errorMessage = 'ID de visite maritime non trouvé';
       this.loading = false;
     }
   }
 
-  loadEscale(id: number): void {
+  loadVisiteMaritime(id: number): void {
     this.visiteMaritimeService.getVisiteMaritimeById(id).subscribe({
       next: (data) => {
         this.visiteMaritime = data;
-        // For backward compatibility, also update the escale property
-        this.escale = this.visiteMaritime as unknown as Escale;
         this.loading = false;
 
         // If there's an AD, pre-fill the DAP form with AD data
@@ -84,8 +79,6 @@ export class ViewEscaleComponent implements OnInit {
         next: () => {
           if (this.visiteMaritime) {
             this.visiteMaritime.ad = undefined;
-            // For backward compatibility, also update the escale property
-            this.escale = this.visiteMaritime as unknown as Escale;
           }
         },
         error: (error) => {
@@ -105,8 +98,6 @@ export class ViewEscaleComponent implements OnInit {
     this.visiteMaritimeService.addDAP(this.visiteMaritime.id, dapData).subscribe({
       next: (updatedVisiteMaritime) => {
         this.visiteMaritime = updatedVisiteMaritime;
-        // For backward compatibility, also update the escale property
-        this.escale = this.visiteMaritime as unknown as Escale;
         this.activeTab = 'dap';
       },
       error: (error) => {
@@ -124,8 +115,6 @@ export class ViewEscaleComponent implements OnInit {
     this.visiteMaritimeService.updateDAP(this.visiteMaritime.id, dapData).subscribe({
       next: (updatedVisiteMaritime) => {
         this.visiteMaritime = updatedVisiteMaritime;
-        // For backward compatibility, also update the escale property
-        this.escale = this.visiteMaritime as unknown as Escale;
       },
       error: (error) => {
         this.errorMessage = 'Erreur lors de la mise à jour du DAP';
@@ -142,8 +131,6 @@ export class ViewEscaleComponent implements OnInit {
         next: () => {
           if (this.visiteMaritime) {
             this.visiteMaritime.dap = undefined;
-            // For backward compatibility, also update the escale property
-            this.escale = this.visiteMaritime as unknown as Escale;
           }
         },
         error: (error) => {
@@ -155,15 +142,13 @@ export class ViewEscaleComponent implements OnInit {
   }
 
   // Status operations
-  annulerEscale(): void {
+  annulerVisiteMaritime(): void {
     if (!this.visiteMaritime) return;
 
     if (confirm('Êtes-vous sûr de vouloir annuler cette visite maritime ?')) {
       this.visiteMaritimeService.annulerVisiteMaritime(this.visiteMaritime.id).subscribe({
         next: (updatedVisiteMaritime) => {
           this.visiteMaritime = updatedVisiteMaritime;
-          // For backward compatibility, also update the escale property
-          this.escale = this.visiteMaritime as unknown as Escale;
         },
         error: (error) => {
           this.errorMessage = 'Erreur lors de l\'annulation de la visite maritime';
@@ -173,15 +158,13 @@ export class ViewEscaleComponent implements OnInit {
     }
   }
 
-  activerEscale(): void {
+  activerVisiteMaritime(): void {
     if (!this.visiteMaritime) return;
 
     if (confirm('Êtes-vous sûr de vouloir activer cette visite maritime ?')) {
       this.visiteMaritimeService.activerVisiteMaritime(this.visiteMaritime.id).subscribe({
         next: (updatedVisiteMaritime) => {
           this.visiteMaritime = updatedVisiteMaritime;
-          // For backward compatibility, also update the escale property
-          this.escale = this.visiteMaritime as unknown as Escale;
         },
         error: (error) => {
           this.errorMessage = 'Erreur lors de l\'activation de la visite maritime';
@@ -191,15 +174,13 @@ export class ViewEscaleComponent implements OnInit {
     }
   }
 
-  cloturerEscale(): void {
+  cloturerVisiteMaritime(): void {
     if (!this.visiteMaritime) return;
 
     if (confirm('Êtes-vous sûr de vouloir clôturer cette visite maritime ?')) {
       this.visiteMaritimeService.cloturerVisiteMaritime(this.visiteMaritime.id).subscribe({
         next: (updatedVisiteMaritime) => {
           this.visiteMaritime = updatedVisiteMaritime;
-          // For backward compatibility, also update the escale property
-          this.escale = this.visiteMaritime as unknown as Escale;
         },
         error: (error) => {
           this.errorMessage = 'Erreur lors de la clôture de la visite maritime';
@@ -210,7 +191,7 @@ export class ViewEscaleComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/escales']);
+    this.router.navigate(['/visites-maritimes']);
   }
 
   // Helper methods for type checking
@@ -228,7 +209,7 @@ export class ViewEscaleComponent implements OnInit {
     return agentMaritime as string;
   }
 
-  getStatusLowerCase(status: EscaleStatus | undefined): string {
+  getStatusLowerCase(status: VisiteMaritimeStatus | undefined): string {
     return status ? status.toLowerCase() : '';
   }
 }

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { AuthService } from "../core/auth/auth.service";
 import { Observable, throwError } from "rxjs";
-import { Escale } from "./escale.service";
+import { map } from "rxjs/operators";
+import { VisiteMaritime } from "./visite-maritime.service";
 
 export enum TypeContenant {
   CONTENEUR = 'CONTENEUR',
@@ -25,7 +26,7 @@ export enum TypeConteneur {
 
 export interface DeclarationSearchCriteria {
   numeroConnaissement?: string;
-  escaleId?: number;
+  visiteMaritimeId?: number;
   agentMaritimeId?: number;
   sensTrafic?: SensTrafic;
   typeContenant?: TypeContenant;
@@ -34,7 +35,7 @@ export interface DeclarationSearchCriteria {
 export interface Connaissement {
   id: number;
   numeroConnaissement: string;
-  escale?: Escale;
+  visiteMaritime?: VisiteMaritime;
   agentMaritime: string;
   sensTrafic: SensTrafic;
   portProvenance: string;
@@ -97,7 +98,7 @@ export class DeclarationService {
 
     if (criteria) {
       if (criteria.numeroConnaissement) params = params.set('numeroConnaissement', criteria.numeroConnaissement);
-      if (criteria.escaleId) params = params.set('escaleId', criteria.escaleId.toString());
+      if (criteria.visiteMaritimeId) params = params.set('visiteMaritimeId', criteria.visiteMaritimeId.toString());
       if (criteria.agentMaritimeId) params = params.set('agentMaritimeId', criteria.agentMaritimeId.toString());
       if (criteria.sensTrafic) params = params.set('sensTrafic', criteria.sensTrafic);
       if (criteria.typeContenant) params = params.set('typeContenant', criteria.typeContenant);
@@ -152,7 +153,31 @@ export class DeclarationService {
       params = params.set('connaissementId', connaissementId.toString());
     }
 
-    return this.http.get<Conteneur[]>(`${this.apiUrl}/conteneurs`, { headers, params });
+    return this.http.get<any>(`${this.apiUrl}/conteneurs`, { headers, params, responseType: 'json' })
+      .pipe(
+        map(response => {
+          // Ensure we always return an array, even if the response is null or undefined
+          if (!response) {
+            return [];
+          }
+          try {
+            // If response is already an array, return it
+            if (Array.isArray(response)) {
+              return response;
+            }
+            // If response is a string, try to parse it as JSON
+            if (typeof response === 'string') {
+              const parsedResponse = JSON.parse(response);
+              return Array.isArray(parsedResponse) ? parsedResponse : [];
+            }
+            // If response is an object, return an empty array
+            return [];
+          } catch (error) {
+            console.error('Error parsing Conteneur response:', error);
+            return [];
+          }
+        })
+      );
   }
 
   getConteneurById(id: number): Observable<Conteneur> {
@@ -201,7 +226,31 @@ export class DeclarationService {
       params = params.set('connaissementId', connaissementId.toString());
     }
 
-    return this.http.get<RORO[]>(`${this.apiUrl}/roros`, { headers, params });
+    return this.http.get<any>(`${this.apiUrl}/roros`, { headers, params, responseType: 'json' })
+      .pipe(
+        map(response => {
+          // Ensure we always return an array, even if the response is null or undefined
+          if (!response) {
+            return [];
+          }
+          try {
+            // If response is already an array, return it
+            if (Array.isArray(response)) {
+              return response;
+            }
+            // If response is a string, try to parse it as JSON
+            if (typeof response === 'string') {
+              const parsedResponse = JSON.parse(response);
+              return Array.isArray(parsedResponse) ? parsedResponse : [];
+            }
+            // If response is an object, return an empty array
+            return [];
+          } catch (error) {
+            console.error('Error parsing RORO response:', error);
+            return [];
+          }
+        })
+      );
   }
 
   getROROById(id: number): Observable<RORO> {
@@ -250,7 +299,31 @@ export class DeclarationService {
       params = params.set('connaissementId', connaissementId.toString());
     }
 
-    return this.http.get<Divers[]>(`${this.apiUrl}/divers`, { headers, params });
+    return this.http.get<any>(`${this.apiUrl}/divers`, { headers, params, responseType: 'json' })
+      .pipe(
+        map(response => {
+          // Ensure we always return an array, even if the response is null or undefined
+          if (!response) {
+            return [];
+          }
+          try {
+            // If response is already an array, return it
+            if (Array.isArray(response)) {
+              return response;
+            }
+            // If response is a string, try to parse it as JSON
+            if (typeof response === 'string') {
+              const parsedResponse = JSON.parse(response);
+              return Array.isArray(parsedResponse) ? parsedResponse : [];
+            }
+            // If response is an object, return an empty array
+            return [];
+          } catch (error) {
+            console.error('Error parsing Divers response:', error);
+            return [];
+          }
+        })
+      );
   }
 
   getDiversById(id: number): Observable<Divers> {
