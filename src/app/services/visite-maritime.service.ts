@@ -97,10 +97,13 @@ export class VisiteMaritimeService {
       'Content-Type': 'application/json'
     });
 
-    // Create a request object with the search criteria
-    const requestBody = criteria || {};
+    // If no criteria are provided, use GET to fetch all visites maritimes
+    if (!criteria || Object.keys(criteria).length === 0) {
+      return this.http.get<VisiteMaritime[]>(this.apiUrl, { headers });
+    }
 
-    return this.http.post<VisiteMaritime[]>(`${this.apiUrl}/search`, requestBody, { headers });
+    // Otherwise, use POST with the search criteria
+    return this.http.post<VisiteMaritime[]>(`${this.apiUrl}/search`, criteria, { headers });
   }
 
   getVisiteMaritimeById(id: number): Observable<VisiteMaritime> {
