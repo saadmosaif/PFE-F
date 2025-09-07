@@ -1,0 +1,92 @@
+<div class="analytics-dashboard">
+  <h2 class="analytics-title">Tableau de Bord Analytique</h2>
+
+  <div class="analytics-grid">
+    <!-- Carte pour le graphique d'escales par port -->
+    <div class="analytics-card">
+      <div class="card-header">
+        <div class="card-icon">📊</div>
+        <h3>Escales par Port et par Mois</h3>
+      </div>
+      <div class="card-body">
+        <div *ngIf="loading.portCalls" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Chargement des données...</p>
+        </div>
+        <div *ngIf="!loading.portCalls" class="chart-container">
+          <canvas baseChart
+            [type]="'line'"
+            [data]="portCallsChartData"
+            [options]="portCallsChartOptions">
+          </canvas>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-text">Évolution mensuelle des escales par port</span>
+      </div>
+    </div>
+
+    <!-- Carte pour le graphique de types de navires -->
+    <div class="analytics-card">
+      <div class="card-header">
+        <div class="card-icon">🚢</div>
+        <h3>Types de Navires</h3>
+      </div>
+      <div class="card-body">
+        <div *ngIf="loading.vesselTypes" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Chargement des données...</p>
+        </div>
+        <div *ngIf="!loading.vesselTypes" class="chart-container">
+          <canvas baseChart
+            [type]="'pie'"
+            [data]="vesselTypesChartData"
+            [options]="vesselTypesChartOptions">
+          </canvas>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-text">Répartition des types de navires accueillis</span>
+      </div>
+    </div>
+
+    <!-- Carte pour le graphique de temps d'attente -->
+    <div class="analytics-card">
+      <div class="card-header">
+        <div class="card-icon">⏱️</div>
+        <h3>Temps d'Attente Moyen</h3>
+      </div>
+      <div class="card-body">
+        <div *ngIf="loading.waitingTimes" class="loading-container">
+          <div class="loading-spinner"></div>
+          <p>Chargement des données...</p>
+        </div>
+        <div *ngIf="!loading.waitingTimes" class="chart-container">
+          <canvas baseChart
+            [type]="'bar'"
+            [data]="waitingTimesChartData"
+            [options]="waitingTimesChartOptions">
+          </canvas>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-text">Temps moyen d'attente des navires avant accostage (en heures)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section d'informations supplémentaires -->
+  <div class="analytics-info">
+    <div class="info-card">
+      <div class="info-icon">ℹ️</div>
+      <div class="info-content">
+        <h4>À propos des statistiques</h4>
+        <p>
+          Ces graphiques présentent une vue d'ensemble de l'activité portuaire. Les données sont mises à jour régulièrement
+          pour refléter l'activité en cours. Utilisez ces informations pour optimiser la gestion des escales et améliorer
+          l'efficacité opérationnelle.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

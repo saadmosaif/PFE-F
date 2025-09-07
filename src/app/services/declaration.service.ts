@@ -104,7 +104,7 @@ export class DeclarationService {
       if (criteria.typeContenant) params = params.set('typeContenant', criteria.typeContenant);
     }
 
-    return this.http.get<Connaissement[]>(`${this.apiUrl}/connaissements/all`, { headers, params });
+    return this.http.get<Connaissement[]>(`${this.apiUrl}/connaissements`, { headers, params });
   }
 
   getConnaissementById(id: number): Observable<Connaissement> {
@@ -194,7 +194,7 @@ export class DeclarationService {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    return this.http.post(`http://localhost:8082/api/conteneurs`, conteneurData, { headers });
+    return this.http.post(`${this.apiUrl}/conteneurs`, conteneurData, { headers });
   }
 
   updateConteneur(id: number, conteneurData: any): Observable<any> {
@@ -267,12 +267,7 @@ export class DeclarationService {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    // Return a mock response since the endpoint doesn't exist yet
-    console.warn('La création de RORO n\'est pas encore implémentée sur le backend');
-    return new Observable(observer => {
-      observer.next({ ...roroData, id: Math.floor(Math.random() * 1000) });
-      observer.complete();
-    });
+    return this.http.post(`${this.apiUrl}/roros`, roroData, { headers });
   }
 
   updateRORO(id: number, roroData: any): Observable<any> {
@@ -311,21 +306,19 @@ export class DeclarationService {
           if (!response) {
             return [];
           }
+
           try {
             // If response is already an array, return it
             if (Array.isArray(response)) {
               return response;
             }
+
             // If response is a string, try to parse it as JSON
             if (typeof response === 'string') {
-              try {
-                const parsedResponse = JSON.parse(response);
-                return Array.isArray(parsedResponse) ? parsedResponse : [];
-              } catch (parseError) {
-                console.error('Error parsing JSON string:', parseError);
-                return [];
-              }
+              const parsedResponse = JSON.parse(response);
+              return Array.isArray(parsedResponse) ? parsedResponse : [];
             }
+
             // If response is an object but not an array, return an empty array
             console.warn('Unexpected response format from /divers endpoint:', response);
             return [];
@@ -351,12 +344,7 @@ export class DeclarationService {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    // Return a mock response since the endpoint doesn't exist yet
-    console.warn('La création de Divers n\'est pas encore implémentée sur le backend');
-    return new Observable(observer => {
-      observer.next({ ...diversData, id: Math.floor(Math.random() * 1000) });
-      observer.complete();
-    });
+    return this.http.post(`${this.apiUrl}/divers`, diversData, { headers });
   }
 
   updateDivers(id: number, diversData: any): Observable<any> {

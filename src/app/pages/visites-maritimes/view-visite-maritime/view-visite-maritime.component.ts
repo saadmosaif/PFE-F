@@ -11,7 +11,7 @@ import { StatusWorkflowComponent } from '../../../components/status-workflow/sta
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, StatusWorkflowComponent],
   templateUrl: './view-visite-maritime.component.html',
-  styleUrl: './view-visite-maritime.component.scss'
+  styleUrls: ['./view-visite-maritime.component.scss']
 })
 export class ViewVisiteMaritimeComponent implements OnInit {
   visiteMaritime: VisiteMaritime | null = null;

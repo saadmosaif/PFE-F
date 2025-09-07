@@ -13,7 +13,7 @@ import { TerminalService, Terminal } from '../../../services/terminal.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './create-visite-maritime.component.html',
-  styleUrl: './create-visite-maritime.component.scss'
+  styleUrls: ['./create-visite-maritime.component.scss']
 })
 export class    CreateVisiteMaritimeComponent implements OnInit {
   visiteMaritimeForm: FormGroup;

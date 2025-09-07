@@ -1,40 +1,100 @@
 <div class="dashboard-container">
-  <img src="assets/logo-marsa.png" alt="Logo Marsa Maroc" class="logo" />
+  <!-- Particules animées en arrière-plan -->
+  <div class="particles-bg">
+    <div class="particle" *ngFor="let particle of particles"
+         [style.left.px]="particle.x"
+         [style.top.px]="particle.y"
+         [style.animation-delay]="particle.delay + 's'"></div>
+  </div>
 
-  <h1 class="dashboard-title fade-in">Gestion portuaire</h1>
+  <!-- Waves animées -->
+  <div class="ocean">
+    <div class="wave"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+  </div>
 
-  <div class="dashboard-grid fade-in">
-    <div class="dashboard-card">
-      <h3>Gestion des ports</h3>
-      <ul>
-        <li><a routerLink="/ports/create">Créer Port</a></li>
-        <li><a routerLink="/ports">Consulter Ports</a></li>
-      </ul>
-    </div>
+  <!-- Logo avec effet brillant -->
+  <div class="logo-container">
+    <img src="assets/logo-marsa.png" alt="Logo Marsa Maroc" class="logo" />
+    <div class="logo-shine"></div>
+    <div class="logo-glow"></div>
+  </div>
 
-    <div class="dashboard-card">
-      <h3>Gestion des terminaux</h3>
-      <ul>
-        <li><a routerLink="/terminaux/create">Créer Terminal</a></li>
-        <li><a routerLink="/terminaux">Consulter Terminaux</a></li>
-      </ul>
-    </div>
+  <!-- Titre avec effet de texte moderne -->
+  <h1 class="dashboard-title fade-in">
+    <span class="title-word" data-text="Gestion">Gestion</span>
+    <span class="title-word gradient-text" data-text="portuaire">portuaire</span>
+  </h1>
 
-    <div class="dashboard-card">
-      <h3>Gestion des navires</h3>
-      <ul>
-        <li><a routerLink="/navires/create">Créer Navire</a></li>
-        <li><a routerLink="/navires">Consulter Navires</a></li>
-      </ul>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>Visites Maritimes</h3>
-      <ul>
-        <li><a routerLink="/visites-maritimes/create">Créer Avis d'arrivée</a></li>
-        <li><a routerLink="/visites-maritimes">Consulter Visite Maritime</a></li>
-        <li><a routerLink="/declarations">Consulter Déclaration Marchandise</a></li>
-      </ul>
+  <!-- Stats rapides flottantes -->
+  <div class="floating-stats">
+    <div class="stat-bubble" *ngFor="let stat of stats; let i = index"
+         [style.animation-delay]="i * 0.2 + 's'">
+      <div class="stat-icon">{{ stat.icon }}</div>
+      <div class="stat-number">{{ stat.value }}</div>
+      <div class="stat-label">{{ stat.label }}</div>
     </div>
   </div>
+
+  <!-- Grid principal avec animations -->
+  <div class="dashboard-grid fade-in">
+    <div class="dashboard-card"
+         *ngFor="let card of dashboardCards; let i = index"
+         [class.card-hover]="hoveredCard === i"
+         (mouseenter)="onCardHover(i)"
+         (mouseleave)="onCardLeave()">
+
+      <!-- Header de la carte avec icône -->
+      <div class="card-header">
+        <div class="card-icon">{{ card.icon }}</div>
+        <h3>{{ card.title }}</h3>
+        <div class="card-badge">{{ card.actions.length }}</div>
+      </div>
+
+      <!-- Corps de la carte -->
+      <div class="card-body">
+        <ul>
+          <li *ngFor="let action of card.actions; let j = index">
+            <a [routerLink]="action.route" class="action-link">
+              <span class="link-icon">{{ action.icon }}</span>
+              <span class="link-text">{{ action.label }}</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Footer avec barre de progression -->
+      <div class="card-footer">
+        <div class="progress-container">
+          <div class="progress-bar" [style.width]="card.progress + '%'"></div>
+        </div>
+        <span class="progress-text">{{ card.progress }}% actif</span>
+      </div>
+
+      <!-- Effet de brillance au hover -->
+      <div class="card-shine"></div>
+    </div>
+  </div>
+
+  <!-- Section Analytique -->
+  <div class="analytics-section fade-in">
+    <h2 class="section-title">Analytiques et Statistiques</h2>
+    <app-analytics-dashboard></app-analytics-dashboard>
+  </div>
+
+  <!-- Bouton d'aide flottant -->
+  <div class="floating-help" (click)="toggleHelp()">
+    <div class="help-icon">?</div>
+    <div class="ripple-effect"></div>
+  </div>
+
+  <!-- Indicateur de scroll -->
+  <div class="scroll-indicator">
+    <div class="scroll-progress" [style.height]="scrollProgress + '%'"></div>
+  </div>
 </div>
+
+<!-- Chatbot pour l'assistance sur les classes et relations -->
+<app-chatbot></app-chatbot>

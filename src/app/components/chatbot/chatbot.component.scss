@@ -1,0 +1,315 @@
+// Variables
+$primary-color: #0073e6;
+$secondary-color: #f0f4f8;
+$text-color: #333;
+$bot-message-bg: #e1f5fe;
+$user-message-bg: #e3f2fd;
+$shadow-color: rgba(0, 0, 0, 0.1);
+$transition-speed: 0.3s;
+
+// Conteneur principal du chatbot
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+// Bouton du chatbot
+.chatbot-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: $primary-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px $shadow-color;
+  position: relative;
+  transition: transform $transition-speed, box-shadow $transition-speed;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px $shadow-color;
+  }
+
+  .chatbot-icon {
+    font-size: 28px;
+    color: white;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pulse-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 115, 230, 0.4);
+    animation: pulse 2s infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+// Animation de pulsation
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+// Interface du chatbot
+.chatbot-interface {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 350px;
+  height: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px $shadow-color;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0);
+  transform-origin: bottom right;
+  transition: transform $transition-speed;
+
+  .open & {
+    transform: scale(1);
+  }
+}
+
+// En-tête du chatbot
+.chatbot-header {
+  background: $primary-color;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+}
+
+// Zone de messages
+.chatbot-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    position: relative;
+    margin-bottom: 5px;
+
+    .message-content {
+      font-size: 14px;
+      line-height: 1.4;
+
+      ul {
+        margin: 5px 0;
+        padding-left: 20px;
+      }
+
+      strong {
+        font-weight: 600;
+      }
+    }
+
+    .message-time {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 5px;
+      text-align: right;
+    }
+  }
+
+  .bot-message {
+    align-self: flex-start;
+    background: $bot-message-bg;
+    border-bottom-left-radius: 5px;
+
+    &::before {
+      content: '🤖';
+      position: absolute;
+      left: -25px;
+      top: 5px;
+      font-size: 16px;
+    }
+  }
+
+  .user-message {
+    align-self: flex-end;
+    background: $user-message-bg;
+    border-bottom-right-radius: 5px;
+    color: $text-color;
+  }
+
+  // Indicateur de frappe
+  .typing-indicator {
+    align-self: flex-start;
+    background: $bot-message-bg;
+    border-radius: 18px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    span {
+      width: 8px;
+      height: 8px;
+      background: $primary-color;
+      border-radius: 50%;
+      display: inline-block;
+      opacity: 0.6;
+
+      &:nth-child(1) {
+        animation: typing 1s infinite 0s;
+      }
+
+      &:nth-child(2) {
+        animation: typing 1s infinite 0.2s;
+      }
+
+      &:nth-child(3) {
+        animation: typing 1s infinite 0.4s;
+      }
+    }
+  }
+}
+
+// Animation de frappe
+@keyframes typing {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+// Zone de saisie
+.chatbot-input {
+  padding: 15px 15px 10px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid $secondary-color;
+
+  input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid $secondary-color;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+
+  button {
+    background: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0 15px;
+    cursor: pointer;
+    transition: background-color $transition-speed;
+
+    &:hover {
+      background-color: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($primary-color, 20%);
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Suggestions de questions
+.chatbot-suggestions {
+  padding: 0 15px 15px;
+
+  p {
+    margin: 0 0 5px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .suggestion-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .suggestion-chip {
+      background: lighten($primary-color, 35%);
+      color: darken($primary-color, 10%);
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: lighten($primary-color, 25%);
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+// Styles responsifs
+@media (max-width: 480px) {
+  .chatbot-interface {
+    width: 300px;
+    height: 450px;
+    right: 0;
+  }
+}

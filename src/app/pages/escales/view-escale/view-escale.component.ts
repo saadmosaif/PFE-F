@@ -11,7 +11,7 @@ import { Navire, Client } from '../../../services/navire.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './view-escale.component.html',
-  styleUrl: './view-escale.component.scss'
+  styleUrls: ['./view-escale.component.scss']
 })
 export class ViewEscaleComponent implements OnInit {
   escale: Escale | null = null;

@@ -1,0 +1,62 @@
+<div class="chatbot-container" [class.open]="isOpen">
+  <!-- Bouton du chatbot -->
+  <div class="chatbot-button" (click)="toggleChat()">
+    <div class="chatbot-icon">🚢</div>
+    <div class="pulse-effect"></div>
+  </div>
+
+  <!-- Interface du chatbot -->
+  <div class="chatbot-interface">
+    <!-- En-tête -->
+    <div class="chatbot-header">
+      <h3>Assistant Portuaire</h3>
+      <button class="close-button" (click)="toggleChat()">×</button>
+    </div>
+
+    <!-- Zone de messages -->
+    <div class="chatbot-messages">
+      <div *ngFor="let message of messages"
+           class="message"
+           [class.user-message]="message.isUser"
+           [class.bot-message]="!message.isUser">
+        <div class="message-content" [innerHTML]="message.content | chatbotFormat"></div>
+        <div class="message-time">{{ message.timestamp | date:'HH:mm' }}</div>
+      </div>
+
+      <!-- Indicateur de frappe -->
+      <div *ngIf="isTyping" class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="chatbot-input">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        placeholder="Posez votre question sur les ports, navires, etc..."
+        (keyup.enter)="sendMessage()"
+        #messageInput
+      />
+      <button (click)="sendMessage()" [disabled]="!newMessage.trim()">
+        <span>Envoyer</span>
+      </button>
+    </div>
+
+    <!-- Suggestions de questions -->
+    <div class="chatbot-suggestions" *ngIf="messages.length < 3">
+      <p>Suggestions:</p>
+      <div class="suggestion-chips">
+        <span class="suggestion-chip" (click)="useQuickQuestion('Liste des ports')">Liste des ports</span>
+        <span class="suggestion-chip" (click)="useQuickQuestion('Liste des navires')">Liste des navires</span>
+        <span class="suggestion-chip" (click)="useQuickQuestion('Liste des terminaux')">Liste des terminaux</span>
+        <span class="suggestion-chip" (click)="useQuickQuestion('Quels sont les terminaux dans Casablanca ?')">Terminaux à Casablanca</span>
+        <span class="suggestion-chip" (click)="useQuickQuestion('C\'est quoi un port ?')">C'est quoi un port ?</span>
+        <span class="suggestion-chip" (click)="useQuickQuestion('Quelles sont les entités du projet Spring Boot ?')">Entités Spring Boot</span>
+        <span class="suggestion-chip" (click)="useQuickQuestion('Donne-moi le code CRUD pour NAVIRE')">Code CRUD Navire</span>
+      </div>
+    </div>
+  </div>
+</div>

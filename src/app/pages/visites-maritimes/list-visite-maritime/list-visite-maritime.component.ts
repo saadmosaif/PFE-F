@@ -11,7 +11,7 @@ import { Client } from '../../../services/navire.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './list-visite-maritime.component.html',
-  styleUrl: './list-visite-maritime.component.scss',
+  styleUrls: ['./list-visite-maritime.component.scss'],
 })
 export class ListVisiteMaritimeComponent implements OnInit {
   searchForm: FormGroup;

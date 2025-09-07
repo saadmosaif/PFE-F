@@ -4,14 +4,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DeclarationService, Connaissement, Conteneur, RORO, Divers, TypeContenant, SensTrafic, TypeConteneur } from '../../../services/declaration.service';
 import { VisiteMaritimeService, VisiteMaritime, VisiteMaritimeStatus } from '../../../services/visite-maritime.service';
-import { Navire, Client } from '../../../services/navire.service';
+import { NavireService, Navire, Client } from '../../../services/navire.service';
+import { PortService } from '../../../services/port.service';
+import { TerminalService } from '../../../services/terminal.service';
+import { ClientService } from '../../../services/client.service';
 
 @Component({
   selector: 'app-view-declaration',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './view-declaration.component.html',
-  styleUrl: './view-declaration.component.scss'
+  styleUrls: ['./view-declaration.component.scss']
 })
 export class ViewDeclarationComponent implements OnInit {
   visiteMaritime: VisiteMaritime | null = null;
@@ -22,6 +25,12 @@ export class ViewDeclarationComponent implements OnInit {
   loading = true;
   errorMessage = '';
   activeTab = 'connaissements';
+
+  // Reference data
+  ports: any[] = [];
+  terminals: any[] = [];
+  navires: Navire[] = [];
+  clients: Client[] = [];
 
   // Forms
   connaissementForm: FormGroup;
@@ -34,6 +43,10 @@ export class ViewDeclarationComponent implements OnInit {
   showConteneurModal = false;
   showRoroModal = false;
   showDiversModal = false;
+
+  // Edit mode
+  editMode = false;
+  editItemId: number | null = null;
 
   // Dropdown options
   sensTraficOptions = [
@@ -60,6 +73,10 @@ export class ViewDeclarationComponent implements OnInit {
     private router: Router,
     private declarationService: DeclarationService,
     private visiteMaritimeService: VisiteMaritimeService,
+    private portService: PortService,
+    private terminalService: TerminalService,
+    private navireService: NavireService,
+    private clientService: ClientService,
     private fb: FormBuilder
   ) {
     this.connaissementForm = this.fb.group({
@@ -98,6 +115,12 @@ export class ViewDeclarationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load reference data
+    this.loadPorts();
+    this.loadTerminals();
+    this.loadNavires();
+    this.loadClients();
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadVisiteMaritime(+id);
@@ -105,6 +128,50 @@ export class ViewDeclarationComponent implements OnInit {
       this.errorMessage = 'ID de visite maritime non trouvé';
       this.loading = false;
     }
+  }
+
+  loadPorts(): void {
+    this.portService.getPorts().subscribe({
+      next: (data) => {
+        this.ports = data;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des ports', error);
+      }
+    });
+  }
+
+  loadTerminals(): void {
+    this.terminalService.getTerminaux().subscribe({
+      next: (data: any) => {
+        this.terminals = data;
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des terminaux', error);
+      }
+    });
+  }
+
+  loadNavires(): void {
+    this.navireService.getNavires().subscribe({
+      next: (data) => {
+        this.navires = data;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des navires', error);
+      }
+    });
+  }
+
+  loadClients(): void {
+    this.clientService.getClient().subscribe({
+      next: (data) => {
+        this.clients = data;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des clients', error);
+      }
+    });
   }
 
   loadVisiteMaritime(id: number): void {
@@ -126,7 +193,140 @@ export class ViewDeclarationComponent implements OnInit {
     this.declarationService.getConnaissements(criteria).subscribe({
       next: (data) => {
         this.connaissements = data;
-        this.loading = false;
+
+        // Load all other types of merchandise
+        if (this.connaissements.length > 0) {
+          // Keep track of pending requests
+          let pendingRequests = this.connaissements.length * 3; // 3 types of merchandise per connaissement
+
+          const decrementPendingRequests = () => {
+            pendingRequests--;
+            if (pendingRequests === 0) {
+              this.loading = false;
+            }
+          };
+
+          this.connaissements.forEach(connaissement => {
+            // Load conteneurs
+            this.declarationService.getConteneurs(connaissement.id).subscribe({
+              next: (data) => {
+                try {
+                  // Filter out items with undefined connaissement or provide a default value
+                  const newConteneurs = (data || []).filter(item => item && item.connaissement);
+
+                  // Add a default connaissement object if needed
+                  newConteneurs.forEach(conteneur => {
+                    if (!conteneur.connaissement) {
+                      conteneur.connaissement = {
+                        id: 0,
+                        numeroConnaissement: 'N/A',
+                        agentMaritime: '',
+                        sensTrafic: SensTrafic.IMPORT,
+                        portProvenance: '',
+                        portDestination: '',
+                        typeContenant: TypeContenant.CONTENEUR,
+                        nombreUnites: 0,
+                        volume: 0,
+                        visiteMaritimeId: 0,
+                        numeroVisite: ''
+                      };
+                    }
+                  });
+
+                  // Add to existing conteneurs
+                  this.conteneurs = [...this.conteneurs, ...newConteneurs];
+                } catch (err) {
+                  console.error('Erreur lors du traitement des données Conteneur', err);
+                }
+                decrementPendingRequests();
+              },
+              error: (error) => {
+                console.error('Erreur lors du chargement des conteneurs', error);
+                decrementPendingRequests();
+              }
+            });
+
+            // Load roros
+            this.declarationService.getROROs(connaissement.id).subscribe({
+              next: (data) => {
+                try {
+                  // Filter out items with undefined connaissement or provide a default value
+                  const newRoros = (data || []).filter(item => item && item.connaissement);
+
+                  // Add a default connaissement object if needed
+                  newRoros.forEach(roro => {
+                    if (!roro.connaissement) {
+                      roro.connaissement = {
+                        id: 0,
+                        numeroConnaissement: 'N/A',
+                        agentMaritime: '',
+                        sensTrafic: SensTrafic.IMPORT,
+                        portProvenance: '',
+                        portDestination: '',
+                        typeContenant: TypeContenant.RORO,
+                        nombreUnites: 0,
+                        volume: 0,
+                        visiteMaritimeId: 0,
+                        numeroVisite: ''
+                      };
+                    }
+                  });
+
+                  // Add to existing roros
+                  this.roros = [...this.roros, ...newRoros];
+                } catch (err) {
+                  console.error('Erreur lors du traitement des données RORO', err);
+                }
+                decrementPendingRequests();
+              },
+              error: (error) => {
+                console.error('Erreur lors du chargement des ROROs', error);
+                decrementPendingRequests();
+              }
+            });
+
+            // Load divers
+            this.declarationService.getDivers(connaissement.id).subscribe({
+              next: (data) => {
+                try {
+                  // Filter out items with undefined connaissement or provide a default value
+                  const newDivers = (data || []).filter(item => item && item.connaissement);
+
+                  // Add a default connaissement object if needed
+                  newDivers.forEach(item => {
+                    if (!item.connaissement) {
+                      item.connaissement = {
+                        id: 0,
+                        numeroConnaissement: 'N/A',
+                        agentMaritime: '',
+                        sensTrafic: SensTrafic.IMPORT,
+                        portProvenance: '',
+                        portDestination: '',
+                        typeContenant: TypeContenant.DIVERS,
+                        nombreUnites: 0,
+                        volume: 0,
+                        visiteMaritimeId: 0,
+                        numeroVisite: ''
+                      };
+                    }
+                  });
+
+                  // Add to existing divers
+                  this.divers = [...this.divers, ...newDivers];
+                } catch (err) {
+                  console.error('Erreur lors du traitement des données Divers', err);
+                }
+                decrementPendingRequests();
+              },
+              error: (error) => {
+                console.error('Erreur lors du chargement des divers', error);
+                decrementPendingRequests();
+              }
+            });
+          });
+        } else {
+          this.loading = false;
+        }
       },
       error: (error) => {
         this.errorMessage = 'Erreur lors du chargement des connaissements';
@@ -136,168 +336,40 @@ export class ViewDeclarationComponent implements OnInit {
     });
   }
 
-  loadConteneurs(connaissementId: number): void {
-    this.declarationService.getConteneurs(connaissementId).subscribe({
-      next: (data) => {
-        try {
-          // Filter out items with undefined connaissement or provide a default value
-          this.conteneurs = (data || []).filter(item => item && item.connaissement);
-
-          // Add a default connaissement object if needed
-          this.conteneurs.forEach(conteneur => {
-            if (!conteneur.connaissement) {
-              conteneur.connaissement = {
-                id: 0,
-                numeroConnaissement: 'N/A',
-                agentMaritime: '',
-                sensTrafic: SensTrafic.IMPORT,
-                portProvenance: '',
-                portDestination: '',
-                typeContenant: TypeContenant.CONTENEUR,
-                nombreUnites: 0,
-                volume: 0,
-                visiteMaritimeId: 0,
-                numeroVisite: ''
-              };
-            }
-          });
-        } catch (err) {
-          console.error('Erreur lors du traitement des données Conteneur', err);
-          this.conteneurs = [];
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des conteneurs', error);
-        // Initialize to empty array to prevent UI issues
-        this.conteneurs = [];
-      },
-      complete: () => {
-        // Ensure we have a valid array even if something went wrong
-        if (!this.conteneurs) {
-          this.conteneurs = [];
-        }
-      }
-    });
-  }
-
-  loadRoros(connaissementId: number): void {
-    this.declarationService.getROROs(connaissementId).subscribe({
-      next: (data) => {
-        try {
-          // Filter out items with undefined connaissement or provide a default value
-          this.roros = (data || []).filter(item => item && item.connaissement);
-
-          // Add a default connaissement object if needed
-          this.roros.forEach(roro => {
-            if (!roro.connaissement) {
-              roro.connaissement = {
-                id: 0,
-                numeroConnaissement: 'N/A',
-                agentMaritime: '',
-                sensTrafic: SensTrafic.IMPORT,
-                portProvenance: '',
-                portDestination: '',
-                typeContenant: TypeContenant.RORO,
-                nombreUnites: 0,
-                volume: 0,
-                visiteMaritimeId: 0,
-                numeroVisite: ''
-              };
-            }
-          });
-        } catch (err) {
-          console.error('Erreur lors du traitement des données RORO', err);
-          this.roros = [];
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des ROROs', error);
-        // Initialize to empty array to prevent UI issues
-        this.roros = [];
-      },
-      complete: () => {
-        // Ensure we have a valid array even if something went wrong
-        if (!this.roros) {
-          this.roros = [];
-        }
-      }
-    });
-  }
-
-  loadDivers(connaissementId: number): void {
-    this.declarationService.getDivers(connaissementId).subscribe({
-      next: (data) => {
-        try {
-          // Filter out items with undefined connaissement or provide a default value
-          this.divers = (data || []).filter(item => item && item.connaissement);
-
-          // Add a default connaissement object if needed
-          this.divers.forEach(item => {
-            if (!item.connaissement) {
-              item.connaissement = {
-                id: 0,
-                numeroConnaissement: 'N/A',
-                agentMaritime: '',
-                sensTrafic: SensTrafic.IMPORT,
-                portProvenance: '',
-                portDestination: '',
-                typeContenant: TypeContenant.DIVERS,
-                nombreUnites: 0,
-                volume: 0,
-                visiteMaritimeId: 0,
-                numeroVisite: ''
-              };
-            }
-          });
-        } catch (err) {
-          console.error('Erreur lors du traitement des données Divers', err);
-          this.divers = [];
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors du chargement des divers', error);
-        // Initialize to empty array to prevent UI issues
-        this.divers = [];
-      },
-      complete: () => {
-        // Ensure we have a valid array even if something went wrong
-        if (!this.divers) {
-          this.divers = [];
-        }
-      }
-    });
-  }
+  // The loadConteneurs, loadRoros, and loadDivers methods have been inlined in the loadConnaissements method
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
 
-    // Load data based on the active tab
-    if (tab === 'conteneurs' && this.conteneurs.length === 0) {
-      // Load conteneurs for all connaissements
-      this.connaissements.forEach(connaissement => {
-        this.loadConteneurs(connaissement.id);
-      });
-    } else if (tab === 'roros' && this.roros.length === 0) {
-      // Load roros for all connaissements
-      this.connaissements.forEach(connaissement => {
-        this.loadRoros(connaissement.id);
-      });
-    } else if (tab === 'divers' && this.divers.length === 0) {
-      // Load divers for all connaissements
-      this.connaissements.forEach(connaissement => {
-        this.loadDivers(connaissement.id);
-      });
-    }
+    // No need to load data here as it's already loaded when the component is initialized
   }
 
   // Modal operations
-  openConnaissementModal(): void {
+  openConnaissementModal(connaissement?: Connaissement): void {
     this.connaissementForm.reset();
+    this.editMode = !!connaissement;
+    this.editItemId = connaissement?.id || null;
+
+    if (connaissement) {
+      this.connaissementForm.patchValue({
+        numeroConnaissement: connaissement.numeroConnaissement,
+        agentMaritime: connaissement.agentMaritime,
+        sensTrafic: connaissement.sensTrafic,
+        portProvenance: connaissement.portProvenance,
+        portDestination: connaissement.portDestination,
+        typeContenant: connaissement.typeContenant,
+        nombreUnites: connaissement.nombreUnites,
+        volume: connaissement.volume
+      });
+    }
+
     this.showConnaissementModal = true;
   }
 
   closeConnaissementModal(): void {
     this.showConnaissementModal = false;
+    this.editMode = false;
+    this.editItemId = null;
   }
 
   submitConnaissement(): void {
@@ -308,24 +380,56 @@ export class ViewDeclarationComponent implements OnInit {
       visiteMaritimeId: this.visiteMaritime.id
     };
 
-    this.declarationService.createConnaissement(connaissementData).subscribe({
-      next: (newConnaissement) => {
-        this.connaissements.push(newConnaissement);
-        this.closeConnaissementModal();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création du connaissement', error);
-      }
-    });
+    if (this.editMode && this.editItemId) {
+      // Update existing connaissement
+      this.declarationService.updateConnaissement(this.editItemId, connaissementData).subscribe({
+        next: (updatedConnaissement) => {
+          const index = this.connaissements.findIndex(c => c.id === this.editItemId);
+          if (index !== -1) {
+            this.connaissements[index] = updatedConnaissement;
+          }
+          this.closeConnaissementModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la mise à jour du connaissement', error);
+        }
+      });
+    } else {
+      // Create new connaissement
+      this.declarationService.createConnaissement(connaissementData).subscribe({
+        next: (newConnaissement) => {
+          this.connaissements.push(newConnaissement);
+          this.closeConnaissementModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création du connaissement', error);
+        }
+      });
+    }
   }
 
-  openConteneurModal(): void {
+  openConteneurModal(conteneur?: Conteneur): void {
     this.conteneurForm.reset();
+    this.editMode = !!conteneur;
+    this.editItemId = conteneur?.id || null;
+
+    if (conteneur) {
+      this.conteneurForm.patchValue({
+        connaissementId: conteneur.connaissement?.id,
+        numeroConteneur: conteneur.numeroConteneur,
+        codeISO: conteneur.codeISO,
+        typeConteneur: conteneur.typeConteneur,
+        dimensions: conteneur.dimensions
+      });
+    }
+
     this.showConteneurModal = true;
   }
 
   closeConteneurModal(): void {
     this.showConteneurModal = false;
+    this.editMode = false;
+    this.editItemId = null;
   }
 
   submitConteneur(): void {
@@ -333,24 +437,56 @@ export class ViewDeclarationComponent implements OnInit {
 
     const conteneurData = this.conteneurForm.value;
 
-    this.declarationService.createConteneur(conteneurData).subscribe({
-      next: (newConteneur) => {
-        this.conteneurs.push(newConteneur);
-        this.closeConteneurModal();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création du conteneur', error);
-      }
-    });
+    if (this.editMode && this.editItemId) {
+      // Update existing conteneur
+      this.declarationService.updateConteneur(this.editItemId, conteneurData).subscribe({
+        next: (updatedConteneur) => {
+          const index = this.conteneurs.findIndex(c => c.id === this.editItemId);
+          if (index !== -1) {
+            this.conteneurs[index] = updatedConteneur;
+          }
+          this.closeConteneurModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la mise à jour du conteneur', error);
+        }
+      });
+    } else {
+      // Create new conteneur
+      this.declarationService.createConteneur(conteneurData).subscribe({
+        next: (newConteneur) => {
+          this.conteneurs.push(newConteneur);
+          this.closeConteneurModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création du conteneur', error);
+        }
+      });
+    }
   }
 
-  openRoroModal(): void {
+  openRoroModal(roro?: RORO): void {
     this.roroForm.reset();
+    this.editMode = !!roro;
+    this.editItemId = roro?.id || null;
+
+    if (roro) {
+      this.roroForm.patchValue({
+        connaissementId: roro.connaissement?.id,
+        numeroIdentification: roro.numeroIdentification,
+        marque: roro.marque,
+        modele: roro.modele,
+        poids: roro.poids
+      });
+    }
+
     this.showRoroModal = true;
   }
 
   closeRoroModal(): void {
     this.showRoroModal = false;
+    this.editMode = false;
+    this.editItemId = null;
   }
 
   submitRoro(): void {
@@ -358,24 +494,55 @@ export class ViewDeclarationComponent implements OnInit {
 
     const roroData = this.roroForm.value;
 
-    this.declarationService.createRORO(roroData).subscribe({
-      next: (newRoro) => {
-        this.roros.push(newRoro);
-        this.closeRoroModal();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création du RORO', error);
-      }
-    });
+    if (this.editMode && this.editItemId) {
+      // Update existing RORO
+      this.declarationService.updateRORO(this.editItemId, roroData).subscribe({
+        next: (updatedRoro) => {
+          const index = this.roros.findIndex(r => r.id === this.editItemId);
+          if (index !== -1) {
+            this.roros[index] = updatedRoro;
+          }
+          this.closeRoroModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la mise à jour du RORO', error);
+        }
+      });
+    } else {
+      // Create new RORO
+      this.declarationService.createRORO(roroData).subscribe({
+        next: (newRoro) => {
+          this.roros.push(newRoro);
+          this.closeRoroModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création du RORO', error);
+        }
+      });
+    }
   }
 
-  openDiversModal(): void {
+  openDiversModal(divers?: Divers): void {
     this.diversForm.reset();
+    this.editMode = !!divers;
+    this.editItemId = divers?.id || null;
+
+    if (divers) {
+      this.diversForm.patchValue({
+        connaissementId: divers.connaissement?.id,
+        description: divers.description,
+        quantite: divers.quantite,
+        poids: divers.poids
+      });
+    }
+
     this.showDiversModal = true;
   }
 
   closeDiversModal(): void {
     this.showDiversModal = false;
+    this.editMode = false;
+    this.editItemId = null;
   }
 
   submitDivers(): void {
@@ -383,15 +550,32 @@ export class ViewDeclarationComponent implements OnInit {
 
     const diversData = this.diversForm.value;
 
-    this.declarationService.createDivers(diversData).subscribe({
-      next: (newDivers) => {
-        this.divers.push(newDivers);
-        this.closeDiversModal();
-      },
-      error: (error) => {
-        console.error('Erreur lors de la création du divers', error);
-      }
-    });
+    if (this.editMode && this.editItemId) {
+      // Update existing divers
+      this.declarationService.updateDivers(this.editItemId, diversData).subscribe({
+        next: (updatedDivers) => {
+          const index = this.divers.findIndex(d => d.id === this.editItemId);
+          if (index !== -1) {
+            this.divers[index] = updatedDivers;
+          }
+          this.closeDiversModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la mise à jour du divers', error);
+        }
+      });
+    } else {
+      // Create new divers
+      this.declarationService.createDivers(diversData).subscribe({
+        next: (newDivers) => {
+          this.divers.push(newDivers);
+          this.closeDiversModal();
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création du divers', error);
+        }
+      });
+    }
   }
 
   // Delete operations
@@ -466,7 +650,7 @@ export class ViewDeclarationComponent implements OnInit {
     return agentMaritime as string;
   }
 
-  getStatusLowerCase(status: VisiteMaritimeStatus | undefined): string {
-    return status ? status.toLowerCase() : '';
+  getStatusLowerCase(status: string | VisiteMaritimeStatus | undefined): string {
+    return status ? String(status).toLowerCase() : '';
   }
 }

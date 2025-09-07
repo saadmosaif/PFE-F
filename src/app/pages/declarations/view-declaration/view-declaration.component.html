@@ -15,7 +15,7 @@
         </div>
         <div class="info-item">
           <span class="label">Numéro AD:</span>
-          <span class="value">{{ visiteMaritime.numeroAD || 'Non défini' }}</span>
+          <span class="value">{{ visiteMaritime.ad?.numeroAD || 'Non défini' }}</span>
         </div>
         <div class="info-item">
           <span class="label">Terminal:</span>
@@ -107,7 +107,7 @@
               <td>{{ connaissement.portProvenance }}</td>
               <td>{{ connaissement.portDestination }}</td>
               <td class="actions">
-                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button edit" title="Modifier" (click)="openConnaissementModal(connaissement)">✏️</button>
                 <button class="icon-button delete" title="Supprimer" (click)="deleteConnaissement(connaissement.id)">🗑️</button>
               </td>
             </tr>
@@ -139,13 +139,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let conteneur of conteneurs">
-              <td>{{ conteneur.connaissement?.numeroConnaissement }}</td>
+              <td>{{ conteneur.connaissement.numeroConnaissement }}</td>
               <td>{{ conteneur.numeroConteneur }}</td>
               <td>{{ conteneur.codeISO }}</td>
               <td>{{ conteneur.typeConteneur }}</td>
               <td>{{ conteneur.dimensions }}</td>
               <td class="actions">
-                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button edit" title="Modifier" (click)="openConteneurModal(conteneur)">✏️</button>
                 <button class="icon-button delete" title="Supprimer" (click)="deleteConteneur(conteneur.id)">🗑️</button>
               </td>
             </tr>
@@ -177,13 +177,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let roro of roros">
-              <td>{{ roro.connaissement?.numeroConnaissement }}</td>
+              <td>{{ roro.connaissement.numeroConnaissement }}</td>
               <td>{{ roro.numeroIdentification }}</td>
               <td>{{ roro.marque }}</td>
               <td>{{ roro.modele }}</td>
               <td>{{ roro.poids }} kg</td>
               <td class="actions">
-                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button edit" title="Modifier" (click)="openRoroModal(roro)">✏️</button>
                 <button class="icon-button delete" title="Supprimer" (click)="deleteRoro(roro.id)">🗑️</button>
               </td>
             </tr>
@@ -214,12 +214,12 @@
           </thead>
           <tbody>
             <tr *ngFor="let item of divers">
-              <td>{{ item.connaissement?.numeroConnaissement }}</td>
+              <td>{{ item.connaissement.numeroConnaissement }}</td>
               <td>{{ item.description }}</td>
               <td>{{ item.quantite }}</td>
               <td>{{ item.poids }} kg</td>
               <td class="actions">
-                <button class="icon-button edit" title="Modifier">✏️</button>
+                <button class="icon-button edit" title="Modifier" (click)="openDiversModal(item)">✏️</button>
                 <button class="icon-button delete" title="Supprimer" (click)="deleteDivers(item.id)">🗑️</button>
               </td>
             </tr>
@@ -238,7 +238,7 @@
   <div class="modal" *ngIf="showConnaissementModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Ajouter un connaissement</h3>
+        <h3>{{ editMode ? 'Modifier' : 'Ajouter' }} un connaissement</h3>
         <button class="close-button" (click)="closeConnaissementModal()">×</button>
       </div>
       <div class="modal-body">
@@ -250,7 +250,10 @@
 
           <div class="form-group">
             <label for="agentMaritime">Agent maritime</label>
-            <input id="agentMaritime" formControlName="agentMaritime" type="text" />
+            <select id="agentMaritime" formControlName="agentMaritime">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let client of clients" [value]="client.compagnie">{{ client.compagnie }}</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -263,12 +266,18 @@
 
           <div class="form-group">
             <label for="portProvenance">Port de provenance</label>
-            <input id="portProvenance" formControlName="portProvenance" type="text" />
+            <select id="portProvenance" formControlName="portProvenance">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let port of ports" [value]="port.nomPort">{{ port.nomPort }}</option>
+            </select>
           </div>
 
           <div class="form-group">
             <label for="portDestination">Port de destination</label>
-            <input id="portDestination" formControlName="portDestination" type="text" />
+            <select id="portDestination" formControlName="portDestination">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let port of ports" [value]="port.nomPort">{{ port.nomPort }}</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -290,7 +299,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="primary-button" [disabled]="connaissementForm.invalid">Enregistrer</button>
+            <button type="submit" class="primary-button" [disabled]="connaissementForm.invalid">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
             <button type="button" class="secondary-button" (click)="closeConnaissementModal()">Annuler</button>
           </div>
         </form>
@@ -302,7 +311,7 @@
   <div class="modal" *ngIf="showConteneurModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Ajouter un conteneur</h3>
+        <h3>{{ editMode ? 'Modifier' : 'Ajouter' }} un conteneur</h3>
         <button class="close-button" (click)="closeConteneurModal()">×</button>
       </div>
       <div class="modal-body">
@@ -341,7 +350,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="primary-button" [disabled]="conteneurForm.invalid">Enregistrer</button>
+            <button type="submit" class="primary-button" [disabled]="conteneurForm.invalid">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
             <button type="button" class="secondary-button" (click)="closeConteneurModal()">Annuler</button>
           </div>
         </form>
@@ -353,7 +362,7 @@
   <div class="modal" *ngIf="showRoroModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Ajouter un RORO</h3>
+        <h3>{{ editMode ? 'Modifier' : 'Ajouter' }} un RORO</h3>
         <button class="close-button" (click)="closeRoroModal()">×</button>
       </div>
       <div class="modal-body">
@@ -389,7 +398,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="primary-button" [disabled]="roroForm.invalid">Enregistrer</button>
+            <button type="submit" class="primary-button" [disabled]="roroForm.invalid">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
             <button type="button" class="secondary-button" (click)="closeRoroModal()">Annuler</button>
           </div>
         </form>
@@ -401,7 +410,7 @@
   <div class="modal" *ngIf="showDiversModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Ajouter un élément divers</h3>
+        <h3>{{ editMode ? 'Modifier' : 'Ajouter' }} un élément divers</h3>
         <button class="close-button" (click)="closeDiversModal()">×</button>
       </div>
       <div class="modal-body">
@@ -432,7 +441,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="primary-button" [disabled]="diversForm.invalid">Enregistrer</button>
+            <button type="submit" class="primary-button" [disabled]="diversForm.invalid">{{ editMode ? 'Modifier' : 'Enregistrer' }}</button>
             <button type="button" class="secondary-button" (click)="closeDiversModal()">Annuler</button>
           </div>
         </form>

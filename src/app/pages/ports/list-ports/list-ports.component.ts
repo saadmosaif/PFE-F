@@ -9,7 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './list-ports.component.html',
-  styleUrl: './list-ports.component.scss'
+  styleUrls: ['./list-ports.component.scss']
 })
 export class ListPortsComponent implements OnInit {
   ports: Port[] = [];

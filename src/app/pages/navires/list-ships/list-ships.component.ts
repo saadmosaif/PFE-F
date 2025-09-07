@@ -9,7 +9,7 @@ import {Navire, NavireService} from "../../../services/navire.service";
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './list-ships.component.html',
-  styleUrl: './list-ships.component.scss'
+  styleUrls: ['./list-ships.component.scss']
 })
 export class ListShipsComponent implements OnInit {
   ships: Navire[] = [];

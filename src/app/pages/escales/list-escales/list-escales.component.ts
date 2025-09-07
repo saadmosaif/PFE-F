@@ -12,7 +12,7 @@ import { Client } from '../../../services/navire.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './list-escales.component.html',
-  styleUrl: './list-escales.component.scss',
+  styleUrls: ['./list-escales.component.scss'],
 })
 export class ListEscalesComponent implements OnInit {
   searchForm: FormGroup;
